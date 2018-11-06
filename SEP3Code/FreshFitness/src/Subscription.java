@@ -1,3 +1,9 @@
+/**
+ * Stores data about Subscription
+ * 
+ * @author Modaser
+ * @version 1.0
+ */
 
 public class Subscription {
 	private int ID;
