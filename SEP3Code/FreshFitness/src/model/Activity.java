@@ -1,3 +1,4 @@
+package model;
 
 /**
  * Stores data about Activity

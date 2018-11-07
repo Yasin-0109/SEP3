@@ -1,3 +1,7 @@
+package model;
+
+
+
 /**
  * Stores data about Workout
  * 
@@ -11,6 +15,13 @@ public class Workout {
 	public int ID;
 	public int numberOfWorkouts;
 	public EWorkoutType type;
+	
+	public Workout(int ID, int numberOfWorkouts, EWorkoutType type)
+	{
+		this.ID = ID;
+		this.numberOfWorkouts = numberOfWorkouts;
+		this.type = type;
+	}
 
 	public int getID() {
 		return ID;
