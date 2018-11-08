@@ -1,8 +1,14 @@
 package model;
 import java.util.ArrayList;
 
+import model.EWorkoutType.EType;
+
+
+
 public class User 
 {
+	
+
 	private int ID;
 	private String firstName;
 	private String lastName;
@@ -53,12 +59,12 @@ public class User
 		return workouts;
 	}
 	
-	public int getNumberOfworkoutsByType(EWorkoutType type)
+	public int getNumberOfworkoutsByType(EType type)
 	{
-		int count = 0;
+		int count=0;
 		for(int i = 0; i < workouts.size(); i++)
 		{
-			if(workouts.get(i).equals(type))
+			if(workouts.get(i).getType().equals(type))
 			{
 				count++;
 			}
@@ -66,6 +72,13 @@ public class User
 		return count;
 	}
 	
+	@Override
+	public String toString() {
+		return "User [ID=" + ID + ", firstName=" + firstName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth
+				+ ", email=" + email + ", password=" + password + ", phoneNumber=" + phoneNumber + ", userRole="
+				+ userRole + ", activities=" + activities + ", subscription=" + subscription + ", workouts=" + workouts
+				+ "]";
+	}
 	
 	
 	

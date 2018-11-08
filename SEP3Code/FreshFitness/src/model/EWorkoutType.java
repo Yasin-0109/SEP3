@@ -20,6 +20,14 @@ public class EWorkoutType {
 	public EWorkoutType(int ID, EType type) {
 		this.ID = ID;
 		this.type = type;
+		
 	}
+
+	@Override
+	public String toString() {
+		return "EWorkoutType [ID=" + ID + ", type=" + type + "]";
+	}
+	
+	
 
 }

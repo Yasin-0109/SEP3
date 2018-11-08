@@ -1,27 +1,34 @@
 package model;
 
-
 /**
  * Stores data about EUserRole
  * 
  * @author Jaser Ghasemi (267243)
  * @version 1.0
  */
-public enum EUserRole 
-{
-	Admin (3),
-	Instructor (2),
-	Member (1);
-	
-	private final int ID;
-	
-	EUserRole(int ID)
-	{
+
+public class EUserRole {
+
+	private int ID;
+	private ERole role;
+
+	public enum ERole {
+		Admin, Instructor, Member;
+	}
+
+	public EUserRole(int ID, ERole role) {
 		this.ID = ID;
+		this.role = role;
+	}
+
+	public int getID() {
+		return this.ID;
+	}
+
+	@Override
+	public String toString() {
+		return "EUserRole [ID=" + ID + ", role=" + role + "]";
 	}
 	
-	public int getID()
-	{
-		return this.ID; 
-	}
+	
 }

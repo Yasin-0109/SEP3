@@ -1,6 +1,6 @@
 package model;
 
-
+import model.EWorkoutType.EType;
 
 /**
  * Stores data about Workout
@@ -14,9 +14,9 @@ public class Workout {
 
 	public int ID;
 	public int numberOfWorkouts;
-	public EWorkoutType type;
+	public EType type;
 	
-	public Workout(int ID, int numberOfWorkouts, EWorkoutType type)
+	public Workout(int ID, int numberOfWorkouts, EType type)
 	{
 		this.ID = ID;
 		this.numberOfWorkouts = numberOfWorkouts;
@@ -39,11 +39,11 @@ public class Workout {
 		this.numberOfWorkouts = numberOfWorkouts;
 	}
 
-	public EWorkoutType getType() {
+	public EType getType() {
 		return type;
 	}
 
-	public void setType(EWorkoutType type) {
+	public void setType(EType type) {
 		this.type = type;
 	}
 
