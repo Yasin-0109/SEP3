@@ -1,4 +1,4 @@
-package model;
+package com.jas.model;
 
 /**
  * Stores data about EWorkoutType

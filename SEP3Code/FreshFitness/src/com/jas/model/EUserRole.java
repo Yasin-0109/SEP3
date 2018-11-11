@@ -1,4 +1,4 @@
-package model;
+package com.jas.model;
 
 /**
  * Stores data about EUserRole
@@ -13,7 +13,28 @@ public class EUserRole {
 	private ERole role;
 
 	public enum ERole {
-		Admin, Instructor, Member;
+		Admin(1), 
+		Member(2),
+		Instructor(3);
+		
+		private final int value;
+		
+		ERole(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+		
+		public static ERole fromInt(int id) {
+			for (ERole r : ERole.values()) {
+				if (r.getValue() == id) {
+					return r;
+				}
+			}
+			throw new IllegalArgumentException("No ERole with ID: " + id);
+		}
 	}
 
 	public EUserRole(int ID, ERole role) {

@@ -1,7 +1,8 @@
-package model;
+package com.jas.model;
 import java.util.ArrayList;
+import java.util.Date;
 
-import model.EWorkoutType.EType;
+import com.jas.model.EWorkoutType.EType;
 
 
 
@@ -12,7 +13,7 @@ public class User
 	private int ID;
 	private String firstName;
 	private String lastName;
-	private MyDate dateOfBirth;
+	private Date dateOfBirth;
 	private String email;
 	private String password;
 	private int phoneNumber;
@@ -21,7 +22,7 @@ public class User
 	private Subscription subscription;
 	private ArrayList<Workout> workouts;
 	
-	public User(int ID, String email, String firstName, String lastName, int phoneNumber, MyDate dateOfBirth, EUserRole userRole)
+	public User(int ID, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, EUserRole userRole)
 	{
 		this.ID = ID;
 		this.email = email;
@@ -32,6 +33,10 @@ public class User
 		this.userRole = userRole;
 		activities = new ArrayList<Activity>();
 		workouts = new ArrayList<Workout>();
+	}
+	
+	public User() { // If someones want to initialize it and after it set values :v
+		this(-1, null, null, null, -1, null, null);
 	}
 	
 	public int getID() {
@@ -58,11 +63,11 @@ public class User
 		this.lastName = lastName;
 	}
 
-	public MyDate getDateOfBirth() {
+	public Date getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(MyDate dateOfBirth) {
+	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 

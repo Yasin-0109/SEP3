@@ -1,6 +1,6 @@
-package model;
+package com.jas.model;
 
-import model.EWorkoutType.EType;
+import com.jas.model.EWorkoutType.EType;
 
 /**
  * Stores data about Workout

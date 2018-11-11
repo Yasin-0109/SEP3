@@ -1,4 +1,4 @@
-package model;
+package com.jas.model;
 
 
 import java.util.GregorianCalendar; 
@@ -10,7 +10,7 @@ private int day;
 private int month;
 private int year;
 
-public MyDate(int d,int m,int y) //3 argument constructor
+public MyDate(int d,int m,int y) //3 argument constructor //Why not Java Date?
 {
    day=d;
    month=m;
