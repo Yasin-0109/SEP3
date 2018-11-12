@@ -2,6 +2,7 @@ package com.jas.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.jas.model.EUserRole.ERole;
 import com.jas.model.EWorkoutType.EType;
 
 
@@ -17,12 +18,12 @@ public class User
 	private String email;
 	private String password;
 	private int phoneNumber;
-	private EUserRole userRole;
+	private ERole userRole;
 	private ArrayList<Activity> activities;
 	private Subscription subscription;
 	private ArrayList<Workout> workouts;
 	
-	public User(int ID, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, EUserRole userRole)
+	public User(int ID, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, ERole userRole)
 	{
 		this.ID = ID;
 		this.email = email;
@@ -95,11 +96,11 @@ public class User
 		this.phoneNumber = phoneNumber;
 	}
 
-	public EUserRole getUserRole() {
+	public ERole getUserRole() {
 		return userRole;
 	}
 
-	public void setUserRole(EUserRole userRole) {
+	public void setUserRole(ERole userRole) {
 		this.userRole = userRole;
 	}
 
