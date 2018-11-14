@@ -14,27 +14,27 @@ public class LoginController {
 		
 		if (request.queryParams("email") == null || request.queryParams("password") == null) {
 			response.status(400); // Return 400 - Bad Request
-			return Result.superUltraError("email and password are required!");
+			return Result.superUltraStatus(false, "email and password are required!");
 		}
 		
 		if (request.queryParams("email").isEmpty() || request.queryParams("password").isEmpty()) {
 			response.status(400); // Return 400 - Bad Request
-			return Result.superUltraError("E-mail/Password can't be empty.");
+			return Result.superUltraStatus(false, "E-mail/Password can't be empty.");
 		}
 		
 		if (Users.getUserByEmail(request.queryParams("email")) == null) {
 			response.status(404); // Return 404 - Not Found
-			return Result.superUltraError("User with specified e-mail doesn't exist!");
+			return Result.superUltraStatus(false, "User with specified e-mail doesn't exist!");
 		}
 		
 		if (!UserController.authenticate(request.queryParams("email"), request.queryParams("password"))) {
 			response.status(403); // Return 403 - Forbidden
-			return Result.superUltraError("User password is incorrect.");
+			return Result.superUltraStatus(false, "User password is incorrect.");
 		}
 		
 		request.session().attribute("currentUserId", Users.getUserByEmail(request.queryParams("email")).getID()); // Let's make a session!
-		response.status(204); // Return 204 - Success with no response body
-		return "";
+		response.status(200); // Return 200 - Success
+		return Result.superUltraStatus(true, "You have been logged in.");
 	};
 	
 	public static Route logoutPost = (Request request, Response response) -> {
@@ -43,8 +43,8 @@ public class LoginController {
 		request.session().removeAttribute("currentUserId");
 		request.session().attribute("loggedOut", true);
 		
-		response.status(204); // Return 204 - Success with no response body
-		return "";
+		response.status(200); // Return 200 - Success
+		return Result.superUltraStatus(true, "You have been logged out.");
 	};
 	
 	public static boolean isLoggedIn(Request request) {

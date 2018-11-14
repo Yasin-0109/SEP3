@@ -8,7 +8,6 @@ import java.util.Date;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jas.controller.LoginController;
-import com.jas.model.EUserRole;
 import com.jas.model.Result;
 import com.jas.model.User;
 import com.jas.model.Workout;
@@ -34,21 +33,27 @@ public class Server
 			return "Hello world lol!"; // Returns this text on request
 		});
 		
+		get("/status", (request, response) -> {
+			response.type("application/json");
+			response.status(200);
+			return Result.superUltraOnlineStatus("Sup boii?");
+		});
+		
 		get("/users", (request, response) -> { // Makes GET /users route - get list of all users
 			response.type("application/json"); // Make result a JSON.
 			
 			if (!LoginController.isLoggedIn(request)) {
 				response.status(403); // Return 403 - Forbidden
-				return Result.superUltraError("You have to be logged in!");
+				return Result.superUltraStatus(false, "You have to be logged in!");
 			}
 			
 			if (Users.getUserById(request.session().attribute("currentUserId")).getUserRole() != ERole.Admin) {
 				response.status(403); // Return 403 - Forbidden
-				return Result.superUltraError("You need to be an Admin!");
+				return Result.superUltraStatus(false, "You need to be an Admin!");
 			}
 			
 			response.status(200); // Return 200 - Success with body data
-			return getGson().toJson(Users.getUsers()); // Returns all users in JSON
+			return Result.superUltraJsonData(true, getGson().toJsonTree(Users.getUsers())); // Returns all users in JSON
 		}); 
 		
 		get("/user/:id", (request, response) -> { // Makes GET /users/id route - get user by id
@@ -59,18 +64,18 @@ public class Server
 				userId = Integer.parseInt(request.params(":id")); // Assign id parameter to userId variable
 			} catch (NumberFormatException ignored) { // Catch the error if it's not integer
 				response.status(400); // Return 400 - Bad Request
-				return Result.superUltraError("Id parameter must be an integer!");
+				return Result.superUltraStatus(false, "Id parameter must be an integer!");
 			}
 			
 			User user = Users.getUserById(userId); // Get user by id
 			
 			if (user == null) { // Check if user doesn't exists
 				response.status(404); // Return 404 - Not Found
-				return Result.superUltraError("User with specified id doesn't exist!");
+				return Result.superUltraStatus(false, "User with specified id doesn't exist!");
 			}
 			
 			response.status(200); // Return 200 - Success with response body
-			return getGson().toJson(user); // Return user in JSON
+			return Result.superUltraJsonData(true, getGson().toJsonTree(user)); // Return user in JSON
 		});
 		
 		post("/login", LoginController.loginPost);
