@@ -1,6 +1,5 @@
 package com.jas.model;
 
-import com.jas.model.EWorkoutType.EType;
 
 /**
  * Stores data about Workout
@@ -12,23 +11,23 @@ import com.jas.model.EWorkoutType.EType;
 
 public class Workout {
 
-	public int ID;
-	public int numberOfWorkouts;
-	public EType type;
+	private int id;
+	private int numberOfWorkouts;
+	private WorkoutType type;
 	
-	public Workout(int ID, int numberOfWorkouts, EType type)
+	public Workout(int id, int numberOfWorkouts, WorkoutType type)
 	{
-		this.ID = ID;
+		this.id = id;
 		this.numberOfWorkouts = numberOfWorkouts;
 		this.type = type;
 	}
 
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getNumberOfWorkouts() {
@@ -39,11 +38,11 @@ public class Workout {
 		this.numberOfWorkouts = numberOfWorkouts;
 	}
 
-	public EType getType() {
+	public WorkoutType getType() {
 		return type;
 	}
 
-	public void setType(EType type) {
+	public void setType(WorkoutType type) {
 		this.type = type;
 	}
 
@@ -52,11 +51,11 @@ public class Workout {
 			return false;
 		}
 		Workout other = (Workout) obj;
-		return ID == other.ID && numberOfWorkouts == other.numberOfWorkouts && type.equals(other.type);
+		return id == other.getId() && numberOfWorkouts == other.getNumberOfWorkouts() && type.equals(other.getType());
 	}
 
 	@Override
 	public String toString() {
-		return "Workout [ID=" + ID + ", numberOfWorkouts=" + numberOfWorkouts + ", type=" + type + "]";
+		return "Workout [id=" + id + ", numberOfWorkouts=" + numberOfWorkouts + ", type=" + type + "]";
 	}
 }

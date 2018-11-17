@@ -1,5 +1,8 @@
 package com.jas.model;
 
+import java.sql.Time;
+import java.util.Date;
+
 /**
  * Stores data about Activity
  * 
@@ -9,27 +12,29 @@ package com.jas.model;
 
 public class Activity {
 	
-	public int ID;
+	public int id;
 	public String name;
-	public MyDate date;
-	public MyDate startTime;
-	public MyDate endTime;
+	public Date date;
+	public Time startTime;
+	public Time endTime;
+	private int instructorId;
 	
-	public Activity(int ID, String name, MyDate date, MyDate startTime, MyDate endTime)
+	public Activity(int id, String name, Date date, Time startTime, Time endTime, int instructorId)
 	{
-		this.ID=ID;
+		this.id=id;
 		this.name=name;
 		this.date=date;
 		this.startTime=startTime;
 		this.endTime=endTime;
+		this.instructorId = instructorId;
 	}
 
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -40,28 +45,36 @@ public class Activity {
 		this.name = name;
 	}
 
-	public MyDate getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(MyDate date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	public MyDate getStartTime() {
+	public Time getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(MyDate startTime) {
+	public void setStartTime(Time startTime) {
 		this.startTime = startTime;
 	}
 
-	public MyDate getEndTime() {
+	public Time getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(MyDate endTime) {
+	public void setEndTime(Time endTime) {
 		this.endTime = endTime;
+	}
+	
+	public int getInstructorId() {
+		return instructorId;
+	}
+	
+	public void setInstructorId(int instructorId) {
+		this.instructorId = instructorId;
 	}
 	
 	public boolean equals(Object obj)
@@ -70,14 +83,14 @@ public class Activity {
 			return false;
 		}
 		Activity other = (Activity) obj;
-		return ID == other.ID && name.equals(other.name)
-				&& date.equals(other.date) && startTime.equals(other.startTime) 
-				&& endTime.equals(other.endTime);
+		return id == other.getId() && name.equals(other.getName())
+				&& date.equals(other.getDate()) && startTime.equals(other.getStartTime()) 
+				&& endTime.equals(other.getEndTime());
 	}
 
 	@Override
 	public String toString() {
-		return "Activity [ID=" + ID + ", name=" + name + ", date=" + date + ", startTime=" + startTime + ", endTime="
+		return "Activity [id=" + id + ", name=" + name + ", date=" + date + ", startTime=" + startTime + ", endTime="
 				+ endTime + "]";
 	}	
 }

@@ -1,13 +1,18 @@
 package com.jas.controller;
 
-import com.jas.model.Result;
+import static spark.Spark.halt;
+
+import java.util.Arrays;
+
+import com.jas.model.UserRole;
 import com.jas.modelData.Users;
+import com.jas.utils.Result;
 
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class LoginController {
+public class SessionController {
 
 	public static Route loginPost = (Request request, Response response) -> {
 		response.type("application/json"); // Make result a JSON.
@@ -32,7 +37,7 @@ public class LoginController {
 			return Result.superUltraStatus(false, "User password is incorrect.");
 		}
 		
-		request.session().attribute("currentUserId", Users.getUserByEmail(request.queryParams("email")).getID()); // Let's make a session!
+		request.session().attribute("currentUserId", Users.getUserByEmail(request.queryParams("email")).getId()); // Let's make a session!
 		response.status(200); // Return 200 - Success
 		return Result.superUltraStatus(true, "You have been logged in.");
 	};
@@ -47,8 +52,29 @@ public class LoginController {
 		return Result.superUltraStatus(true, "You have been logged out.");
 	};
 	
-	public static boolean isLoggedIn(Request request) {
-		return request.session().attribute("currentUserId") != null;
+	public static void isLoggedIn(Request request) {
+		if(request.session().attribute("currentUserId") == null) {
+			halt(403, Result.superUltraStatus(false, "You need to be logged in!"));
+		} 
+	}
+	
+	public static void isLoggedInAs(Request request, UserRole... roles) {
+		StringBuilder sb = new StringBuilder("You need to be logged in as ");
+		String prefix = "";
+		for(UserRole role : roles) {
+			sb.append(prefix);
+			prefix = "/";
+			sb.append(role.getName());
+		}
+		sb.append('!');
+		
+		if (request.session().attribute("currentUserId") == null || !Arrays.stream(roles).anyMatch(Users.getUserById(request.session().attribute("currentUserId")).getUserRole()::equals)) {
+			halt(403, Result.superUltraStatus(false, sb.toString()));
+		}
+	};
+	
+	public static int getUserId(Request request) {
+		return request.session().attribute("currentUserId");
 	}
 	
 }

@@ -1,5 +1,7 @@
 package com.jas.model;
 
+import java.util.Date;
+
 /**
  * Stores data about Subscription
  * 
@@ -8,61 +10,50 @@ package com.jas.model;
  */
 
 public class Subscription {
-	private int ID;
-	private int userID;
-	private MyDate validFrom;
-	private MyDate validTo;
-	private int subscriptionTypeID;
+	private int id;
+	private int userId;
+	private Date validFrom;
+	private Date validTo;
 	private SubscriptionType subscriptionType;
 
-	public Subscription(int ID, int userID, MyDate validFrom, MyDate validTo, int subscriptiontypeID,
-			SubscriptionType subscriptiontype) {
-		this.ID = ID;
-		this.userID = userID;
+	public Subscription(int id, int userId, Date validFrom, Date validTo, SubscriptionType subscriptionType) {
+		this.id = id;
+		this.userId = userId;
 		this.validFrom = validFrom;
 		this.validTo = validTo;
-		this.subscriptionTypeID = subscriptionTypeID;
 		this.subscriptionType = subscriptionType;
 	}
 
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public int getUserID() {
-		return userID;
+	public int getUserId() {
+		return userId;
 	}
 
-	public void setUserID(int userID) {
-		this.userID = userID;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
-	public MyDate getValidFrom() {
+	public Date getValidFrom() {
 		return validFrom;
 	}
 
-	public void setValidFrom(MyDate validFrom) {
+	public void setValidFrom(Date validFrom) {
 		this.validFrom = validFrom;
 	}
 
-	public MyDate getValidTo() {
+	public Date getValidTo() {
 		return validTo;
 	}
 
-	public void setValidTo(MyDate validTo) {
+	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
-	}
-
-	public int getSubscriptionTypeID() {
-		return subscriptionTypeID;
-	}
-
-	public void setSubscriptionTypeID(int subscriptionTypeID) {
-		this.subscriptionTypeID = subscriptionTypeID;
 	}
 
 	public SubscriptionType getSubscriptionType() {
@@ -78,9 +69,8 @@ public class Subscription {
 			return false;
 		}
 		Subscription other = (Subscription) obj;
-		return ID == other.ID && userID == other.userID && validFrom.equals(other.validFrom)
-				&& validTo.equals(other.validTo) && subscriptionTypeID == other.subscriptionTypeID
-				&& subscriptionType.equals(other.subscriptionType);
+		return id == other.getId() && userId == other.getUserId() && validFrom.equals(other.getValidFrom())
+				&& validTo.equals(other.getValidTo()) && subscriptionType.equals(other.getSubscriptionType());
 	}
 
 	public boolean isUserUnregistered() {
@@ -93,7 +83,7 @@ public class Subscription {
 
 	@Override
 	public String toString() {
-		return "Subscription [ID=" + ID + ", userID=" + userID + ", validFrom=" + validFrom + ", validTo=" + validTo
-				+ ", subscriptionTypeID=" + subscriptionTypeID + ", subscriptionType=" + subscriptionType + "]";
+		return "Subscription [id=" + id + ", userId=" + id + ", validFrom=" + validFrom + ", validTo=" + validTo
+				+ ", subscriptionType=" + subscriptionType + "]";
 	}
 }

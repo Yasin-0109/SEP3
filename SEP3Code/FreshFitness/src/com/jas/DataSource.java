@@ -20,6 +20,7 @@ public class DataSource {
 		props.setProperty("dataSource.databaseName", "postgres"); // Set database
 		props.setProperty("dataSource.portNumber", "5432"); // Set PostgreSQL server port
 		props.setProperty("dataSource.serverName", "localhost"); // Set PostgreSQL server location
+		props.setProperty("dataSource.currentSchema", "freshfitness");
 		props.put("dataSource.logWriter", new PrintWriter(System.out)); // Return logs to System.out
 		
 		config = new HikariConfig(props); // Initialize new config

@@ -1,31 +1,24 @@
 package com.jas.model;
+
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.jas.model.EUserRole.ERole;
-import com.jas.model.EWorkoutType.EType;
-
-
-
-public class User 
-{
-	
-
-	private int ID;
+public class User {
+	private int id;
 	private String firstName;
 	private String lastName;
 	private Date dateOfBirth;
 	private String email;
 	private String password;
 	private int phoneNumber;
-	private ERole userRole;
+	private UserRole userRole;
 	private ArrayList<Activity> activities;
 	private Subscription subscription;
 	private ArrayList<Workout> workouts;
 	
-	public User(int ID, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, ERole userRole)
+	public User(int id, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, UserRole userRole)
 	{
-		this.ID = ID;
+		this.id = id;
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -40,12 +33,12 @@ public class User
 		this(-1, null, null, null, -1, null, null);
 	}
 	
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -96,11 +89,11 @@ public class User
 		this.phoneNumber = phoneNumber;
 	}
 
-	public ERole getUserRole() {
+	public UserRole getUserRole() {
 		return userRole;
 	}
 
-	public void setUserRole(ERole userRole) {
+	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
 	}
 
@@ -163,7 +156,7 @@ public class User
 		return workouts;
 	}
 	
-	public int getNumberOfworkoutsByType(EType type)
+	public int getNumberOfworkoutsByType(WorkoutType type)
 	{
 		int count=0;
 		for(int i = 0; i < workouts.size(); i++)
@@ -178,7 +171,7 @@ public class User
 	
 	@Override
 	public String toString() {
-		return "User [ID=" + ID + ", firstName=" + firstName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth
 				+ ", email=" + email + ", password=" + password + ", phoneNumber=" + phoneNumber + ", userRole="
 				+ userRole + ", activities=" + activities + ", subscription=" + subscription + ", workouts=" + workouts
 				+ "]";

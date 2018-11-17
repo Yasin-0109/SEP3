@@ -1,19 +1,11 @@
 package com.jas;
 
 import static spark.Spark.*;
-import static spark.debug.DebugScreen.*;
-
-import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jas.controller.LoginController;
-import com.jas.model.Result;
-import com.jas.model.User;
-import com.jas.model.Workout;
-import com.jas.modelData.Users;
-import com.jas.model.EUserRole.ERole;
-import com.jas.model.EWorkoutType.EType;
+import com.jas.controller.*;
+import com.jas.utils.Utils;
 
 public class Server 
 {
@@ -22,85 +14,116 @@ public class Server
 	public static void main(String[] args)
 	{	
 		gson = new GsonBuilder()
-				.setPrettyPrinting()
-				.create(); // Make JSON results prettier!
+				.serializeNulls() // Serialize null values.
+				.setPrettyPrinting() // Make JSON results prettier!
+				.create(); 
 		
 		port(8080); // Sets Spark server port
 		init(); // Initializes Spark server
-		enableDebugScreen();
 		
-		get("/", (request, response) -> { // Makes default GET / route
-			return "Hello world lol!"; // Returns this text on request
+		before((o,a) -> a.type("application/json")); // API will return JSON data by default.
+		
+		// Server
+		notFound(ServerController.notFound); // Handle 404 errors.
+		internalServerError(ServerController.internalError); // Handle 500 errors.
+		get("/", ServerController.main);
+		get("/status", ServerController.status);
+		
+		// Admin
+		path("/admin", () -> {
+			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getAdminRole()));
+			
+			path("/activities", () -> {
+				get("/", AdminController.activityList);
+				post("/add", AdminController.activityAdd);
+				
+				path("/:id", () -> {
+					put("/edit", AdminController.activityEdit);
+					delete("/delete", AdminController.activityDel);
+				});
+			});
+			
+			path("/subscriptions", () -> {
+				get("/", AdminController.subscriptionList);
+				post("/add", AdminController.subscriptionAdd);
+				
+				path("/:id", () -> {
+					put("/edit", AdminController.subscriptionEdit);
+					delete("/delete", AdminController.subscriptionDel);
+				});
+			});
+			
+			path("/users", () -> {
+				get("/", AdminController.userList);
+				post("/add", AdminController.userAdd);
+				
+				path("/:id", () -> {
+					get("/", AdminController.userInfo);
+					put("/edit", AdminController.userEdit);
+					delete("/delete", AdminController.userDel);
+				});
+			});
+			
+			path("/workouts/types", () -> {
+				get("/", AdminController.workoutTypeList);
+				post("/add", AdminController.workoutTypeAdd);
+				
+				path("/:id", () -> {
+					put("/edit", AdminController.workoutTypeEdit);
+					delete("/delete", AdminController.workoutTypeDel);
+				});
+			});
 		});
 		
-		get("/status", (request, response) -> {
-			response.type("application/json");
-			response.status(200);
-			return Result.superUltraOnlineStatus("Sup boii?");
+		// Instructor
+		path("/instructor", () -> {
+			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getInstructorRole(), Utils.getAdminRole()));
+			
+			path("/activities", () -> {
+				get("/", InstructorController.activityList);
+				post("/add", InstructorController.activityAdd);
+				
+				path("/:id", () -> {
+					put("/edit", InstructorController.activityEdit);
+					delete("/delete", InstructorController.activityDel);
+				});
+			});
 		});
 		
-		get("/users", (request, response) -> { // Makes GET /users route - get list of all users
-			response.type("application/json"); // Make result a JSON.
-			
-			if (!LoginController.isLoggedIn(request)) {
-				response.status(403); // Return 403 - Forbidden
-				return Result.superUltraStatus(false, "You have to be logged in!");
-			}
-			
-			if (Users.getUserById(request.session().attribute("currentUserId")).getUserRole() != ERole.Admin) {
-				response.status(403); // Return 403 - Forbidden
-				return Result.superUltraStatus(false, "You need to be an Admin!");
-			}
-			
-			response.status(200); // Return 200 - Success with body data
-			return Result.superUltraJsonData(true, getGson().toJsonTree(Users.getUsers())); // Returns all users in JSON
-		}); 
+		// Authentication
+		post("/login", SessionController.loginPost);
+		post("/logout", SessionController.logoutPost);
 		
-		get("/user/:id", (request, response) -> { // Makes GET /users/id route - get user by id
-			response.type("application/json"); // Make result a JSON.
+		// User
+		path("/user", () -> {
+			before("/*", (o,a) -> SessionController.isLoggedIn(o));
+			get("/", UserController.userInfo);
+			get("/subscription/", UserController.subscriptionInfo);
 			
-			int userId = -1; // Initialize local userId variable
-			try { // Check if id parameter is valid
-				userId = Integer.parseInt(request.params(":id")); // Assign id parameter to userId variable
-			} catch (NumberFormatException ignored) { // Catch the error if it's not integer
-				response.status(400); // Return 400 - Bad Request
-				return Result.superUltraStatus(false, "Id parameter must be an integer!");
-			}
+			path("/activities", () -> {
+				get("/", UserController.userActivityList);
+				post("/add", UserController.userActivityAdd);
+				
+				path("/:id", () -> {
+					put("/edit", UserController.userActivityEdit);
+					delete("/delete", UserController.userActivityDel);
+				});
+			});
 			
-			User user = Users.getUserById(userId); // Get user by id
-			
-			if (user == null) { // Check if user doesn't exists
-				response.status(404); // Return 404 - Not Found
-				return Result.superUltraStatus(false, "User with specified id doesn't exist!");
-			}
-			
-			response.status(200); // Return 200 - Success with response body
-			return Result.superUltraJsonData(true, getGson().toJsonTree(user)); // Return user in JSON
+			path("/workouts", () -> {
+				get("/", UserController.workoutList);
+				post("/add", UserController.workoutAdd);
+				
+				path("/:id", () -> {
+					put("/edit", UserController.workoutEdit);
+					delete("/delete", UserController.workoutDel);
+				});
+			});
 		});
-		
-		post("/login", LoginController.loginPost);
-		post("/logout", LoginController.logoutPost);
-		
-		///
-		
-		
-		Workout workout = new Workout(1, 5, EType.benchpress);
-		Workout workout2 = new Workout(1, 10, EType.benchpress);
-		
-		ERole role = ERole.Admin;
-		
-		User bob = new User(1, "email", "firstName", "lastName", 34234556, new Date(), role);
-		
-		System.out.println(bob);
-		
-		bob.addWorkOut(workout);
-		bob.addWorkOut(workout2);
-		
-		System.out.println(bob.getNumberOfworkoutsByType(EType.boxing));
-		
 	}
 	
 	public static Gson getGson() {
 		return gson;
 	}
+	
 }

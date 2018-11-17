@@ -1,4 +1,4 @@
-package com.jas.model;
+package com.jas.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

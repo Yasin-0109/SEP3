@@ -1,5 +1,6 @@
 package com.jas.model;
 
+import java.math.BigDecimal;
 
 /**
  * Stores data about SubscriptionType
@@ -10,14 +11,14 @@ package com.jas.model;
 
 public class SubscriptionType {
 
-	private int ID;
+	private int id;
 	private String type;
-	private int price;
+	private BigDecimal price; // Dealing with money in Java - https://blogs.oracle.com/corejavatechtips/the-need-for-bigdecimal
 	
 /**
  * Creates a new SubscriptionType
  * 
- * @param ID
+ * @param id
  * 			SubscriptionTypeID
  * @param type
  * 			The type of the Subscription
@@ -25,18 +26,18 @@ public class SubscriptionType {
  * 			The price of the Subscription
  */
 	
-	public SubscriptionType(int ID, String type, int price) {
-		this.ID = ID;
+	public SubscriptionType(int id, String type, BigDecimal price) {
+		this.id = id;
 		this.type = type;
 		this.price = price;
 	}
 
-	public void setID(int id) {
-		this.ID = ID;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
 	public void setType(String type) {
@@ -47,11 +48,11 @@ public class SubscriptionType {
 		return type;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
-	public int getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
@@ -60,11 +61,11 @@ public class SubscriptionType {
 			return false;
 		}
 		SubscriptionType other = (SubscriptionType) obj;
-		return ID == other.ID && type.equals(other.type) && price == other.price;
+		return id == other.getId() && type.equals(other.getType()) && price == other.getPrice();
 	}
 
 	@Override
 	public String toString() {
-		return "SubscriptionType [ID=" + ID + ", type=" + type + ", price=" + price + "]";
+		return "SubscriptionType [id=" + id + ", type=" + type + ", price=" + price + "]";
 	}
 }

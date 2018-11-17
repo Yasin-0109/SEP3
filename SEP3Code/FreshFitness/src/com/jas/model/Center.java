@@ -1,6 +1,7 @@
 package com.jas.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Center {
@@ -84,7 +85,7 @@ public class Center {
 		return count;
 	}	
 	
-	public int getNumberOfActivitiesByDate(MyDate date)
+	public int getNumberOfActivitiesByDate(Date date)
 	{
 		int count=0;
 		for(int i = 0; i < activities.size(); i++)
