@@ -12,14 +12,16 @@ package com.jas.model;
 public class Workout {
 
 	private int id;
-	private int numberOfWorkouts;
+	private int userId;
 	private WorkoutType type;
+	private int numberOfWorkouts;
 	
-	public Workout(int id, int numberOfWorkouts, WorkoutType type)
+	public Workout(int id, int userId, WorkoutType type, int numberOfWorkouts)
 	{
 		this.id = id;
-		this.numberOfWorkouts = numberOfWorkouts;
+		this.userId = userId;
 		this.type = type;
+		this.numberOfWorkouts = numberOfWorkouts;
 	}
 
 	public int getId() {
@@ -30,6 +32,22 @@ public class Workout {
 		this.id = id;
 	}
 
+	public int getUserId() {
+		return userId;
+	}
+	
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	
+	public WorkoutType getType() {
+		return type;
+	}
+
+	public void setType(WorkoutType type) {
+		this.type = type;
+	}
+	
 	public int getNumberOfWorkouts() {
 		return numberOfWorkouts;
 	}
@@ -38,24 +56,16 @@ public class Workout {
 		this.numberOfWorkouts = numberOfWorkouts;
 	}
 
-	public WorkoutType getType() {
-		return type;
-	}
-
-	public void setType(WorkoutType type) {
-		this.type = type;
-	}
-
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Workout)) {
 			return false;
 		}
 		Workout other = (Workout) obj;
-		return id == other.getId() && numberOfWorkouts == other.getNumberOfWorkouts() && type.equals(other.getType());
+		return id == other.getId() && userId == other.getUserId() && type.equals(other.getType()) && numberOfWorkouts == other.getNumberOfWorkouts() ;
 	}
 
 	@Override
 	public String toString() {
-		return "Workout [id=" + id + ", numberOfWorkouts=" + numberOfWorkouts + ", type=" + type + "]";
+		return "Workout [id=" + id + ", userId=" + userId + "type=" + type + ", numberOfWorkouts=" + numberOfWorkouts + "]";
 	}
 }

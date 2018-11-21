@@ -1,7 +1,6 @@
 package com.jas.model;
 
-import java.sql.Time;
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * Stores data about Activity
@@ -14,16 +13,14 @@ public class Activity {
 	
 	public int id;
 	public String name;
-	public Date date;
-	public Time startTime;
-	public Time endTime;
+	public Timestamp startTime;
+	public Timestamp endTime;
 	private int instructorId;
 	
-	public Activity(int id, String name, Date date, Time startTime, Time endTime, int instructorId)
+	public Activity(int id, String name, Timestamp startTime, Timestamp endTime, int instructorId)
 	{
 		this.id=id;
 		this.name=name;
-		this.date=date;
 		this.startTime=startTime;
 		this.endTime=endTime;
 		this.instructorId = instructorId;
@@ -45,27 +42,19 @@ public class Activity {
 		this.name = name;
 	}
 
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Time getStartTime() {
+	public Timestamp getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Time startTime) {
+	public void setStartTime(Timestamp startTime) {
 		this.startTime = startTime;
 	}
 
-	public Time getEndTime() {
+	public Timestamp getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Time endTime) {
+	public void setEndTime(Timestamp endTime) {
 		this.endTime = endTime;
 	}
 	
@@ -84,13 +73,13 @@ public class Activity {
 		}
 		Activity other = (Activity) obj;
 		return id == other.getId() && name.equals(other.getName())
-				&& date.equals(other.getDate()) && startTime.equals(other.getStartTime()) 
+				&& startTime.equals(other.getStartTime()) 
 				&& endTime.equals(other.getEndTime());
 	}
 
 	@Override
 	public String toString() {
-		return "Activity [id=" + id + ", name=" + name + ", date=" + date + ", startTime=" + startTime + ", endTime="
+		return "Activity [id=" + id + ", name=" + name + ", startTime=" + startTime + ", endTime="
 				+ endTime + "]";
 	}	
 }

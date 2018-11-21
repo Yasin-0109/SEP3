@@ -20,7 +20,7 @@ public class WorkoutTypes {
 	}
 	
 	private static void getDataFromDataBase() {
-		// Initializing subscriptions variable
+		// Initializing workoutTypes variable
 		try {
 			String SQL_QUERY = "select * from workouttype;";
 			Connection conn = DataSource.getConnection(); // Getting connection to database
@@ -39,7 +39,7 @@ public class WorkoutTypes {
 		}
 	}
 	
-	public static void refreshData() {
+	public static void refreshData() { // Refreshes data in variable
 		getDataFromDataBase();
 	}
 	
@@ -48,9 +48,9 @@ public class WorkoutTypes {
 	}
 	
 	public static WorkoutType getWorkoutTypeById(int id) {
-		return workoutTypes.stream()
-				.filter(wt -> wt.getId() == id)
-				.findFirst()
-				.orElse(null);
+		return workoutTypes.stream() // In Java 8 we can simply use streams instead of for loop :)
+				.filter(wt -> wt.getId() == id) // Filter the list
+				.findFirst() // Get first workout type from filtered list
+				.orElse(null); // Return null if there's no user
 	}
 }

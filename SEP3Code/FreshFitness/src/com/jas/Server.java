@@ -26,12 +26,12 @@ public class Server
 		// Server
 		notFound(ServerController.notFound); // Handle 404 errors.
 		internalServerError(ServerController.internalError); // Handle 500 errors.
-		get("/", ServerController.main);
-		get("/status", ServerController.status);
+		get("/", ServerController.main); // Add main route for the server
+		get("/status", ServerController.status); // Add status route
 		
-		// Admin
+		// Admin routes
 		path("/admin", () -> {
-			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getAdminRole()));
+			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getAdminRole())); // Check if user is an admin for all reqests
 			
 			path("/activities", () -> {
 				get("/", AdminController.activityList);
@@ -75,9 +75,9 @@ public class Server
 			});
 		});
 		
-		// Instructor
+		// Instructor routes
 		path("/instructor", () -> {
-			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getInstructorRole(), Utils.getAdminRole()));
+			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getInstructorRole(), Utils.getAdminRole())); // Check if user is an admin or instructor for all reqests
 			
 			path("/activities", () -> {
 				get("/", InstructorController.activityList);
@@ -90,13 +90,13 @@ public class Server
 			});
 		});
 		
-		// Authentication
+		// Authentication routes
 		post("/login", SessionController.loginPost);
 		post("/logout", SessionController.logoutPost);
 		
-		// User
+		// User routes
 		path("/user", () -> {
-			before("/*", (o,a) -> SessionController.isLoggedIn(o));
+			before("/*", (o,a) -> SessionController.isLoggedIn(o)); // Check if user is logged in for all requests
 			get("/", UserController.userInfo);
 			get("/subscription/", UserController.subscriptionInfo);
 			
@@ -122,7 +122,7 @@ public class Server
 		});
 	}
 	
-	public static Gson getGson() {
+	public static Gson getGson() { // Returns initialized gson instance
 		return gson;
 	}
 	

@@ -2,6 +2,7 @@ package com.jas.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class User {
 	private int id;
@@ -12,9 +13,9 @@ public class User {
 	private String password;
 	private int phoneNumber;
 	private UserRole userRole;
-	private ArrayList<Activity> activities;
+	private List<Activity> activities;
 	private Subscription subscription;
-	private ArrayList<Workout> workouts;
+	private List<Workout> workouts;
 	
 	public User(int id, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, UserRole userRole)
 	{
@@ -97,12 +98,12 @@ public class User {
 		this.userRole = userRole;
 	}
 
-	public ArrayList<Activity> getActivities() {
+	public List<Activity> getActivities() {
 		return activities;
 	}
 
-	public void setActivities(ArrayList<Activity> activities) {
-		this.activities = activities;
+	public void setActivities(List<Activity> userActivity) {
+		this.activities = userActivity;
 	}
 
 	public Subscription getSubscription() {
@@ -113,15 +114,15 @@ public class User {
 		this.subscription = subscription;
 	}
 
-	public ArrayList<Workout> getWorkouts() {
+	public List<Workout> getWorkouts() {
 		return workouts;
 	}
 
-	public void setWorkouts(ArrayList<Workout> workouts) {
-		this.workouts = workouts;
+	public void setWorkouts(List<Workout> list) {
+		this.workouts = list;
 	}	
 	
-	public ArrayList<Activity> getAllActivities()
+	public List<Activity> getAllActivities()
 	{
 		return activities;
 	}
@@ -151,7 +152,7 @@ public class User {
 		activities.remove(activity);
 	}
 	
-	public ArrayList<Workout> getAllWorkouts()
+	public List<Workout> getAllWorkouts()
 	{
 		return workouts;
 	}

@@ -15,11 +15,11 @@ public class UserRoles {
 	private static List<UserRole> userRoles;
 	
 	static { // Will be called as soon as this class will be executed.
-		getDataFromDataBase(); // Pulls users data from database into users variable.
+		getDataFromDataBase(); // Pulls data from database into variable.
 	}
 	
 	private static void getDataFromDataBase() {
-		// Initializing subscriptions variable
+		// Initializing user roles variable
 		try {
 			String SQL_QUERY = "select * from userrole;";
 			Connection conn = DataSource.getConnection(); // Getting connection to database
@@ -28,28 +28,28 @@ public class UserRoles {
 			
 			List<UserRole> temp = new ArrayList<>(); // Initializing temporary user roles list - temp one so while updating there still exists current data
 			
-			while (rs.next()) {
+			while (rs.next()) { // Add user roles from database
 				temp.add(new UserRole(rs.getInt("id"), rs.getString("role")));
 			}
 
-			userRoles = temp; // Assigning temporary user roles list to subscriptionTypes variable
+			userRoles = temp; // Assigning temporary user roles list to user roles variable
 		} catch (SQLException error) { // Catch any SQL errors
 			System.out.println("[Error] Couldn't initialize User roles data! Reason: " + error.getMessage()); // Show it to the console
 		}
 	}
 	
-	public static void refreshData() {
+	public static void refreshData() { // Refreshes data in variable
 		getDataFromDataBase();
 	}
 	
-	public static List<UserRole> getUserRoles() {
+	public static List<UserRole> getUserRoles() { // Returns a list of user roles
 		return userRoles;
 	}
 	
-	public static UserRole getUserRoleById(int id) {
-		return userRoles.stream()
-				.filter(ur -> ur.getId() == id)
-				.findFirst()
-				.orElse(null);
+	public static UserRole getUserRoleById(int id) { // Returns a specific user role by it's ID
+		return userRoles.stream() // In Java 8 we can simply use streams instead of for loop :)
+				.filter(ur -> ur.getId() == id) // Filter the list
+				.findFirst() // Get first user role from filtered list
+				.orElse(null); // Return null if there's no user role
 	}
 }

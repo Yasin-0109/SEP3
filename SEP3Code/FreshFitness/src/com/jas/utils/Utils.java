@@ -5,11 +5,11 @@ import com.jas.modelData.UserRoles;
 
 public class Utils {
 
-	public static UserRole getAdminRole() {
+	public static UserRole getAdminRole() { // Returns admin user role
 		return UserRoles.getUserRoleById(1); // Hardcoded in DB
 	}
 	
-	public static UserRole getInstructorRole() {
+	public static UserRole getInstructorRole() { // Returns instructor user role
 		return UserRoles.getUserRoleById(3); // Hardcoded in DB
 	}
 }

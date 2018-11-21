@@ -16,7 +16,7 @@ public class SubscriptionTypes {
 	private static List<SubscriptionType> subscriptionTypes;
 	
 	static { // Will be called as soon as this class will be executed.
-		getDataFromDataBase(); // Pulls users data from database into users variable.
+		getDataFromDataBase(); // Pulls data from database into variable.
 	}
 	
 	private static void getDataFromDataBase() {
@@ -29,7 +29,7 @@ public class SubscriptionTypes {
 			
 			List<SubscriptionType> temp = new ArrayList<>(); // Initializing temporary subscription types list - temp one so while updating there still exists current data
 			
-			while (rs.next()) {
+			while (rs.next()) { // Adding subscription types from database
 				temp.add(new SubscriptionType(rs.getInt("id"), rs.getString("type"), rs.getBigDecimal("price")));
 			}
 
@@ -39,18 +39,18 @@ public class SubscriptionTypes {
 		}
 	}
 	
-	public static void refreshData() {
+	public static void refreshData() { // Refreshes data in variable
 		getDataFromDataBase();
 	}
 	
-	public static List<SubscriptionType> getSubscriptionTypes() {
+	public static List<SubscriptionType> getSubscriptionTypes() { // Returns a list of subscription types
 		return subscriptionTypes;
 	}
 	
-	public static SubscriptionType getSubscriptionTypeById(int id) {
-		return subscriptionTypes.stream()
-				.filter(st -> st.getId() == id)
-				.findFirst()
-				.orElse(null);
+	public static SubscriptionType getSubscriptionTypeById(int id) { // Returns a subscription type by it's id
+		return subscriptionTypes.stream() // In Java 8 we can simply use streams instead of for loop :)
+				.filter(st -> st.getId() == id) // Filter the list
+				.findFirst() // Get first subscription type from filtered list
+				.orElse(null); // Return null if there's no subscription type
 	}
 }

@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.jas.DataSource;
 import com.jas.model.Activity;
-import com.jas.model.Subscription;
 import com.jas.model.User;
 import com.jas.model.Workout;
 
@@ -53,45 +52,22 @@ public class Users {
 				user.setPhoneNumber(rs.getInt("phonenumber")); // Setting it's phone number
 				
 				// User activities
-				ArrayList<Activity> userActivity = new ArrayList<>();
-				PreparedStatement pst2 = conn.prepareStatement("select * from userActivity where userid = ?");
-				pst2.setInt(1, user.getId());
-				ResultSet rs2 = pst2.executeQuery();
-				while(rs2.next()) {
-					userActivity.add(Activities.getActivityById(rs2.getInt("activityid")));
+				List<Activity> userActivity = new ArrayList<>(); // Create temporary user activity list
+				PreparedStatement pst2 = conn.prepareStatement("select * from userActivity where userid = ?"); // Prepare the query
+				pst2.setInt(1, user.getId()); // Set user id in query
+				ResultSet rs2 = pst2.executeQuery(); // Executing query
+				while(rs2.next()) { // Loop through all returned rows
+					userActivity.add(Activities.getActivityById(rs2.getInt("activityid"))); // Add activity by it's ID.
 				}
-				user.setActivities(userActivity);
+				user.setActivities(userActivity); // Set user activities
 				
 				// User subscription
-				PreparedStatement pst3 = conn.prepareStatement("select * from subscription where userid = ?;");
-				pst3.setInt(1, user.getId());
-				ResultSet rs3 = pst3.executeQuery();
-				if (rs3.isBeforeFirst()) { // Simply - check if result set is not empty.
-					rs3.next();
-					user.setSubscription(new Subscription(
-						rs3.getInt("id"),
-						user.getId(),
-						rs3.getDate("validfrom"),
-						rs3.getDate("validto"),
-						SubscriptionTypes.getSubscriptionTypeById(rs3.getInt("subscriptiontypeid"))
-					));
-				}
+				user.setSubscription(Subscriptions.getUserSubscription(user.getId())); // Set user subscription
 				
 				// User workouts
-				ArrayList<Workout> userWorkouts = new ArrayList<>();
-				PreparedStatement pst4 = conn.prepareStatement("select * from workout where userid = ?;");
-				pst4.setInt(1, user.getId());
-				ResultSet rs4 = pst4.executeQuery();
-				while(rs4.next()) {
-					userWorkouts.add(new Workout(
-						rs4.getInt("id"),
-						rs4.getInt("numberofworkouts"),
-						WorkoutTypes.getWorkoutTypeById(rs4.getInt("workouttypeid"))
-					));
-				}
-				user.setWorkouts(userWorkouts);
+				user.setWorkouts(Workouts.getUserWorkouts(user.getId())); // Set user workouts
 
-				temp.add(user);
+				temp.add(user); // Add user to temporary list
 			}
 			
 			users = temp; // Assigning temporary users list to users variable
@@ -100,7 +76,7 @@ public class Users {
 		}
 	}
 	
-	public static void refreshData() {
+	public static void refreshData() { // Refreshes data in variable
 		getDataFromDataBase();
 	}
 	
@@ -108,7 +84,7 @@ public class Users {
 	 * Gets all existing users.
 	 * @return
 	 */
-	public static List<User> getUsers() {
+	public static List<User> getUsers() { // Returns a list of users
 		return users;
 	}
 	
@@ -117,7 +93,7 @@ public class Users {
 	 * @param id Id of user
 	 * @return User
 	 */
-	public static User getUserById(int id) {
+	public static User getUserById(int id) { // Returns a user by it's ID
 		for(User user : users) {
 			if (user.getId() == id) {
 				return user;
@@ -131,11 +107,11 @@ public class Users {
 	 * @param email Email addres of user
 	 * @return
 	 */
-	public static User getUserByEmail(String email) {
-		return users.stream()
-				.filter(user -> user.getEmail().equalsIgnoreCase(email))
-				.findFirst()
-				.orElse(null); // In Java 8 we can simply use streams instead of for loop :)
+	public static User getUserByEmail(String email) { // Returns a user by it's email
+		return users.stream() // In Java 8 we can simply use streams instead of for loop :)
+				.filter(user -> user.getEmail().equalsIgnoreCase(email)) // Filter the list
+				.findFirst() // Get first user from filtered list
+				.orElse(null); // Return null if there's no user
 	}
 	
 	

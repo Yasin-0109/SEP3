@@ -27,7 +27,7 @@ public class DataSource {
 		ds = new HikariDataSource(config); // Initialize HikariCP pool
 	}
 	
-	private DataSource() {
+	private DataSource() { // Empty initializer
 		
 	}
 	

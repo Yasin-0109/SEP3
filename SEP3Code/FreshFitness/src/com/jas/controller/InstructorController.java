@@ -10,19 +10,19 @@ public class InstructorController {
 
 	// Activities
 	public static Route activityAdd = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Returns all data in JSON
 	};
 	
 	public static Route activityDel = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Returns all data in JSON
 	};
 	
 	public static Route activityEdit = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Returns all data in JSON
 	};
 	
 	public static Route activityList = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Returns all data in JSON
 	};
 	
 }

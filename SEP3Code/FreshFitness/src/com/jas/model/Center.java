@@ -1,7 +1,6 @@
 package com.jas.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 
 public class Center {
@@ -84,20 +83,7 @@ public class Center {
 		}
 		return count;
 	}	
-	
-	public int getNumberOfActivitiesByDate(Date date)
-	{
-		int count=0;
-		for(int i = 0; i < activities.size(); i++)
-		{
-			if(activities.get(i).getDate().equals(date))
-			{
-				count++;
-			}
-		}
-		return count;
-	}
-	
+		
 	@Override
 	public String toString() {
 		return "Center [ID=" + ID + ", name=" + name + ", address=" + address + ", users=" + users + ", activities="

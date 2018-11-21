@@ -4,8 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jas.Server;
 
+import spark.Response;
+
 public class Result {
 
+	/* Premade result json objects */
+	
 	public static String superUltraError(String reason) {
 		JsonObject jsonCode = new JsonObject();
 		jsonCode.addProperty("reason", reason);
@@ -35,5 +39,10 @@ public class Result {
 		jsonCode.add("data", data);
 		
 		return Server.getGson().toJson(jsonCode);
+	}
+	
+	public static String notImplementedYet(Response response) {
+		response.status(501);
+		return superUltraStatus(false, "Not implemented yet!");
 	}
 }

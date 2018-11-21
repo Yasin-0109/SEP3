@@ -38,15 +38,15 @@ public class UserController {
 	
 	// User activities
 	public static Route userActivityAdd = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Send not implemented message
 	};
 	
 	public static Route userActivityDel = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Send not implemented message
 	};
 	
 	public static Route userActivityEdit = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Send not implemented message
 	};
 	
 	public static Route userActivityList = (Request request, Response response) -> {
@@ -56,15 +56,15 @@ public class UserController {
 	
 	// Workouts
 	public static Route workoutAdd = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Send not implemented message
 	};
 
 	public static Route workoutDel = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Send not implemented message
 	};
 	
 	public static Route workoutEdit = (Request request, Response response) -> {
-		return Result.superUltraStatus(false, "Not implemented yet!");
+		return Result.notImplementedYet(response); // Send not implemented message
 	};
 	
 	public static Route workoutList = (Request request, Response response) -> {
