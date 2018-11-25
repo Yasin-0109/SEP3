@@ -2,7 +2,7 @@ package com.jas.model;
 
 import java.util.ArrayList;
 
-
+@Deprecated
 public class Center {
 	
 
@@ -58,12 +58,6 @@ public class Center {
 	public ArrayList<User> getAllUser()
 	{
 		return users;
-	}
-	
-	public void registerActivity(Activity activity, User user)
-	{
-		user = new User(ID, address, address, address, ID, null, null);
-		user.addActivity(activity);	
 	}
 	
 	public ArrayList<Activity> getAllActivities()

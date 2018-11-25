@@ -4,13 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.jas.DataSource;
-import com.jas.model.Activity;
 import com.jas.model.User;
-import com.jas.model.Workout;
 
 public class Users {
 
@@ -41,32 +40,17 @@ public class Users {
 			List<User> temp = new ArrayList<>(); // Initializing temporary users list - temp one so while updating there still exists current data
 			
 			while (rs.next()) { // Loop through all returned rows
-				User user = new User(); // Creating a new user
-				user.setId(rs.getInt("id")); // Setting it's ID
-				user.setUserRole(UserRoles.getUserRoleById(rs.getInt("userroleid"))); // Setting it's Role
-				user.setFirstName(rs.getString("firstname")); // Setting it's first name
-				user.setLastName(rs.getString("lastname")); // Setting it's last name
-				user.setDateOfBirth(rs.getDate("dateofbirth")); // Setting it's date of birth
-				user.setEmail(rs.getString("email")); // Setting it's email
+				User user = new User(rs.getInt("id"), // Setting it's ID
+						rs.getString("email"), // Setting it's email
+						rs.getString("firstname"), // Setting it's first name
+						rs.getString("lastname"), // Setting it's last name
+						rs.getInt("phonenumber"), // Setting it's phone number
+						rs.getTimestamp("dateofbirth"), // Setting it's date of birth
+						UserRoles.getUserRoleById(rs.getInt("userroleid")) // Setting it's Role
+				); // Creating a new user
+				
 				user.setPassword(rs.getString("password")); // Setting it's password
-				user.setPhoneNumber(rs.getInt("phonenumber")); // Setting it's phone number
-				
-				// User activities
-				List<Activity> userActivity = new ArrayList<>(); // Create temporary user activity list
-				PreparedStatement pst2 = conn.prepareStatement("select * from userActivity where userid = ?"); // Prepare the query
-				pst2.setInt(1, user.getId()); // Set user id in query
-				ResultSet rs2 = pst2.executeQuery(); // Executing query
-				while(rs2.next()) { // Loop through all returned rows
-					userActivity.add(Activities.getActivityById(rs2.getInt("activityid"))); // Add activity by it's ID.
-				}
-				user.setActivities(userActivity); // Set user activities
-				
-				// User subscription
-				user.setSubscription(Subscriptions.getUserSubscription(user.getId())); // Set user subscription
-				
-				// User workouts
-				user.setWorkouts(Workouts.getUserWorkouts(user.getId())); // Set user workouts
-
+			
 				temp.add(user); // Add user to temporary list
 			}
 			
@@ -78,6 +62,83 @@ public class Users {
 	
 	public static void refreshData() { // Refreshes data in variable
 		getDataFromDataBase();
+	}
+	
+	public static boolean addUser(User user) { // Adds user to database
+		try {
+			Connection conn = DataSource.getConnection();
+			
+			String SQL_QUERY = "INSERT INTO users (userroleid,firstname,lastname,dateofbirth,email,password,phonenumber) VALUES (?,?,?,?,?,?,?)";
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
+			pst.setInt(1, user.getUserRole().getId());
+			pst.setString(2, user.getFirstName());
+			pst.setString(3, user.getLastName());
+			pst.setTimestamp(4, user.getDateOfBirth());
+			pst.setString(5, user.getEmail());
+			pst.setString(6, user.getPassword());
+			pst.setInt(7, user.getPhoneNumber());
+			int rc = pst.executeUpdate();
+			
+			if (rc > 0) { // Insert to database was success
+				ResultSet gk = pst.getGeneratedKeys();
+				if (gk.isBeforeFirst()) {
+					user.setId(gk.getInt("id")); // Assign new user Id to it
+					users.add(user);
+					return true;
+				}
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't add user to database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
+	}
+	
+	public static boolean delUser(User user) { // Removes user from database
+		try {
+			Connection conn = DataSource.getConnection();
+			
+			String SQL_QUERY = "delete from users where id=?";
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
+			pst.setInt(1, user.getId());
+			int rc = pst.executeUpdate();
+			pst.close();
+			
+			if (rc > 0) { // Delete from database was success
+				users.remove(users.indexOf(user));
+				return true;
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't delete user from database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
+	}
+	
+	public static boolean editUser(User user) { // Updates user in database
+		try {
+			User old = getUserById(user.getId());
+			
+			Connection conn = DataSource.getConnection();
+			String SQL_QUERY = "update users set userroleid = ?, firstname = ?,lastname = ?, dateofbirth = ?, email = ?, password = ?, phonenumber = ? where id = ?";
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+			pst.setInt(1, user.getUserRole().getId());
+			pst.setString(2, user.getFirstName());
+			pst.setString(3, user.getLastName());
+			pst.setTimestamp(4, user.getDateOfBirth());
+			pst.setString(5, user.getEmail());
+			pst.setString(6, user.getPassword());
+			pst.setInt(7, user.getPhoneNumber());
+			pst.setInt(8, user.getId());
+			int rc = pst.executeUpdate();
+			pst.close();
+			
+			if (rc > 0) { // Update on database was success
+				users.set(users.indexOf(old), user);
+				return true;
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't update user in database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
 	}
 	
 	/**

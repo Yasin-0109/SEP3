@@ -2,7 +2,7 @@ package com.jas.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.jas.Server;
+import com.jas.Main;
 
 import spark.Response;
 
@@ -14,7 +14,7 @@ public class Result {
 		JsonObject jsonCode = new JsonObject();
 		jsonCode.addProperty("reason", reason);
 		
-		return Server.getGson().toJson(jsonCode);
+		return Main.getServer().getGson().toJson(jsonCode);
 	}
 	
 	public static String superUltraOnlineStatus(String status) {
@@ -22,7 +22,7 @@ public class Result {
 		jsonCode.addProperty("online", true);
 		jsonCode.addProperty("status", status);
 		
-		return Server.getGson().toJson(jsonCode);
+		return Main.getServer().getGson().toJson(jsonCode);
 	}
 	
 	public static String superUltraStatus(Boolean isOk, String message) {
@@ -30,7 +30,7 @@ public class Result {
 		jsonCode.addProperty("status", isOk);
 		jsonCode.addProperty("message", message);
 		
-		return Server.getGson().toJson(jsonCode);
+		return Main.getServer().getGson().toJson(jsonCode);
 	}
 	
 	public static String superUltraJsonData(Boolean isOk, JsonElement data) {
@@ -38,7 +38,7 @@ public class Result {
 		jsonCode.addProperty("status", isOk);
 		jsonCode.add("data", data);
 		
-		return Server.getGson().toJson(jsonCode);
+		return Main.getServer().getGson().toJson(jsonCode);
 	}
 	
 	public static String notImplementedYet(Response response) {

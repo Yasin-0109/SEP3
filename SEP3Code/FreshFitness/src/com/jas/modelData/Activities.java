@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.jas.DataSource;
 import com.jas.model.Activity;
@@ -125,10 +126,17 @@ public class Activities {
 		return activities;
 	}
 	
+	public static List<Activity> getInstructorActivities(int instructorId) { // Returns activities which belong to an instructor
+		return activities.stream() // In Java 8 we can simply use streams instead of for loop :)
+				.filter(a -> a.getInstructorId() == instructorId) // Filter the list
+				.collect(Collectors.toList()); // Return a filtered list
+	}
+	
 	public static Activity getActivityById(int id) { // Returns a specific activity by it's ID
 		return activities.stream() // In Java 8 we can simply use streams instead of for loop :)
 			.filter(a -> a.getId() == id) // Filter the list
 			.findFirst() // Get first activity from filtered list
 			.orElse(null); // Return null if there's no activity
 	}
+	
 }

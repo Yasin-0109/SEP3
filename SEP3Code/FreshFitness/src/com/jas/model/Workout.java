@@ -1,5 +1,6 @@
 package com.jas.model;
 
+import java.sql.Timestamp;
 
 /**
  * Stores data about Workout
@@ -15,13 +16,15 @@ public class Workout {
 	private int userId;
 	private WorkoutType type;
 	private int numberOfWorkouts;
+	private Timestamp date;
 	
-	public Workout(int id, int userId, WorkoutType type, int numberOfWorkouts)
+	public Workout(int id, int userId, WorkoutType type, int numberOfWorkouts, Timestamp date)
 	{
 		this.id = id;
 		this.userId = userId;
 		this.type = type;
 		this.numberOfWorkouts = numberOfWorkouts;
+		this.date = date;
 	}
 
 	public int getId() {
@@ -54,6 +57,14 @@ public class Workout {
 
 	public void setNumberOfWorkouts(int numberOfWorkouts) {
 		this.numberOfWorkouts = numberOfWorkouts;
+	}
+	
+	public Timestamp getDate() {
+		return date;
+	}
+	
+	public void setDate(Timestamp date) {
+		this.date = date;
 	}
 
 	public boolean equals(Object obj) {

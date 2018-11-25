@@ -1,23 +1,23 @@
 package com.jas.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class User {
 	private int id;
 	private String firstName;
 	private String lastName;
-	private Date dateOfBirth;
+	private Timestamp dateOfBirth;
 	private String email;
 	private String password;
 	private int phoneNumber;
 	private UserRole userRole;
-	private List<Activity> activities;
-	private Subscription subscription;
-	private List<Workout> workouts;
+	//private List<Activity> userActivities; // We already have them somewhere else
+	//private Subscription subscription; // We already have it somewhere else
+	//private List<Workout> workouts; // We already have them somewhere else
 	
-	public User(int id, String email, String firstName, String lastName, int phoneNumber, Date dateOfBirth, UserRole userRole)
+	public User(int id, String email, String firstName, String lastName, int phoneNumber, Timestamp dateOfBirth, UserRole userRole)
 	{
 		this.id = id;
 		this.email = email;
@@ -26,12 +26,8 @@ public class User {
 		this.phoneNumber = phoneNumber;
 		this.dateOfBirth = dateOfBirth;
 		this.userRole = userRole;
-		activities = new ArrayList<Activity>();
-		workouts = new ArrayList<Workout>();
-	}
-	
-	public User() { // If someones want to initialize it and after it set values :v
-		this(-1, null, null, null, -1, null, null);
+		//userActivities = new ArrayList<Activity>();
+		//workouts = new ArrayList<Workout>();
 	}
 	
 	public int getId() {
@@ -58,11 +54,11 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public Date getDateOfBirth() {
+	public Timestamp getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(Timestamp dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 
@@ -97,85 +93,12 @@ public class User {
 	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
 	}
-
-	public List<Activity> getActivities() {
-		return activities;
-	}
-
-	public void setActivities(List<Activity> userActivity) {
-		this.activities = userActivity;
-	}
-
-	public Subscription getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
-
-	public List<Workout> getWorkouts() {
-		return workouts;
-	}
-
-	public void setWorkouts(List<Workout> list) {
-		this.workouts = list;
-	}	
-	
-	public List<Activity> getAllActivities()
-	{
-		return activities;
-	}
-	
-	public int getNumberOfActivities()
-	{
-		return activities.size();
-	}
-	
-	public void addWorkOut(Workout workout)
-	{
-		workouts.add(workout);
-	}
-	
-	public void removeWorkout(Workout workout)
-	{
-		workouts.remove(workout);
-	}
-	
-	public void addActivity(Activity activity)
-	{
-		activities.add(activity);
-	}
-	
-	public void removeActivity(Activity activity)
-	{
-		activities.remove(activity);
-	}
-	
-	public List<Workout> getAllWorkouts()
-	{
-		return workouts;
-	}
-	
-	public int getNumberOfworkoutsByType(WorkoutType type)
-	{
-		int count=0;
-		for(int i = 0; i < workouts.size(); i++)
-		{
-			if(workouts.get(i).getType().equals(type))
-			{
-				count++;
-			}
-		}
-		return count;
-	}
 	
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth
 				+ ", email=" + email + ", password=" + password + ", phoneNumber=" + phoneNumber + ", userRole="
-				+ userRole + ", activities=" + activities + ", subscription=" + subscription + ", workouts=" + workouts
-				+ "]";
+				+ userRole + "]";
 	}
 	
 	

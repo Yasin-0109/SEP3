@@ -1,6 +1,6 @@
 package com.jas.model;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * Stores data about Subscription
@@ -12,11 +12,11 @@ import java.util.Date;
 public class Subscription {
 	private int id;
 	private int userId;
-	private Date validFrom;
-	private Date validTo;
+	private Timestamp validFrom;
+	private Timestamp validTo;
 	private SubscriptionType subscriptionType;
 
-	public Subscription(int id, int userId, Date validFrom, Date validTo, SubscriptionType subscriptionType) {
+	public Subscription(int id, int userId, Timestamp validFrom, Timestamp validTo, SubscriptionType subscriptionType) {
 		this.id = id;
 		this.userId = userId;
 		this.validFrom = validFrom;
@@ -40,19 +40,19 @@ public class Subscription {
 		this.userId = userId;
 	}
 
-	public Date getValidFrom() {
+	public Timestamp getValidFrom() {
 		return validFrom;
 	}
 
-	public void setValidFrom(Date validFrom) {
+	public void setValidFrom(Timestamp validFrom) {
 		this.validFrom = validFrom;
 	}
 
-	public Date getValidTo() {
+	public Timestamp getValidTo() {
 		return validTo;
 	}
 
-	public void setValidTo(Date validTo) {
+	public void setValidTo(Timestamp validTo) {
 		this.validTo = validTo;
 	}
 

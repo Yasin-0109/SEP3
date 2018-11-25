@@ -35,7 +35,8 @@ public class Workouts {
 					rs.getInt("id"),
 					rs.getInt("userid"),
 					WorkoutTypes.getWorkoutTypeById(rs.getInt("workouttypeid")),
-					rs.getInt("numberofworkouts")
+					rs.getInt("numberofworkouts"),
+					rs.getTimestamp("date")
 				));
 			}
 
@@ -54,11 +55,12 @@ public class Workouts {
 		try {
 			Connection conn = DataSource.getConnection();
 			
-			String SQL_QUERY = "insert into workout(userid, workouttypeid, numberofworkouts) values (?,?,?)";
+			String SQL_QUERY = "insert into workout(userid, workouttypeid, numberofworkouts, date) values (?,?,?,?)";
 			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
 			pst.setInt(1, workout.getUserId());
 			pst.setInt(2, workout.getType().getId());
 			pst.setInt(3, workout.getNumberOfWorkouts());
+			pst.setTimestamp(4, workout.getDate());
 			int rc = pst.executeUpdate();
 			
 			if (rc > 0) { // Insert to database was success
@@ -100,12 +102,13 @@ public class Workouts {
 			Workout old = getWorkoutById(workout.getId());
 			
 			Connection conn = DataSource.getConnection();
-			String SQL_QUERY = "update workout set userid = ?, workouttypeid = ?, numberofworkouts = ? where id = ?";
+			String SQL_QUERY = "update workout set userid = ?, workouttypeid = ?, numberofworkouts = ?, date = ? where id = ?";
 			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
 			pst.setInt(1, workout.getUserId());
 			pst.setInt(2, workout.getType().getId());
 			pst.setInt(3, workout.getNumberOfWorkouts());
-			pst.setInt(4, workout.getId());
+			pst.setTimestamp(4, workout.getDate());
+			pst.setInt(5, workout.getId());
 			int rc = pst.executeUpdate();
 			pst.close();
 			

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,71 @@ public class WorkoutTypes {
 	
 	public static void refreshData() { // Refreshes data in variable
 		getDataFromDataBase();
+	}
+	
+	public static boolean addWorkoutType(WorkoutType workoutType) { // Adds workout type to database
+		try {
+			Connection conn = DataSource.getConnection();
+			
+			String SQL_QUERY = "insert into workouttype(type) values (?)";
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
+			pst.setString(1, workoutType.getType());
+			int rc = pst.executeUpdate();
+			
+			if (rc > 0) { // Insert to database was success
+				ResultSet gk = pst.getGeneratedKeys();
+				if (gk.isBeforeFirst()) {
+					workoutType.setId(gk.getInt("id")); // Assign new workout type Id to it
+					workoutTypes.add(workoutType);
+					return true;
+				}
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't add workout type to database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
+	}
+	
+	public static boolean delWorkoutType(WorkoutType workoutType) { // Removes workout type from database
+		try {
+			Connection conn = DataSource.getConnection();
+			
+			String SQL_QUERY = "delete from workouttype where id=?";
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+			pst.setInt(1, workoutType.getId());
+			int rc = pst.executeUpdate();
+			pst.close();
+			
+			if (rc > 0) { // Delete from database was success
+				workoutTypes.remove(workoutTypes.indexOf(workoutType));
+				return true;
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't delete workout type from database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
+	}
+	
+	public static boolean editWorkoutType(WorkoutType workoutType) { // Updates workout type in database
+		try {
+			WorkoutType old = getWorkoutTypeById(workoutType.getId());
+			
+			Connection conn = DataSource.getConnection();
+			String SQL_QUERY = "update workouttype set type = ? where id = ?";
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+			pst.setString(1, workoutType.getType());
+			pst.setInt(2, workoutType.getId());
+			int rc = pst.executeUpdate();
+			pst.close();
+			
+			if (rc > 0) { // Update on database was success
+				workoutTypes.set(workoutTypes.indexOf(old), workoutType);
+				return true;
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't update workout type on database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
 	}
 	
 	public static List<WorkoutType> getWorkoutTypes() {

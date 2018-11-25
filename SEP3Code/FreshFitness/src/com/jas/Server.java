@@ -9,15 +9,15 @@ import com.jas.utils.Utils;
 
 public class Server 
 {
-	private static Gson gson;
+	private Gson gson;
 	
-	public static void main(String[] args)
-	{	
+	public void start() {
 		gson = new GsonBuilder()
 				.serializeNulls() // Serialize null values.
 				.setPrettyPrinting() // Make JSON results prettier!
 				.create(); 
 		
+		secure("deploy/keystore3.jks", "aBKzWP2QfZx4XwHdFjtYUj56", null, null);
 		port(8080); // Sets Spark server port
 		init(); // Initializes Spark server
 		
@@ -98,14 +98,15 @@ public class Server
 		path("/user", () -> {
 			before("/*", (o,a) -> SessionController.isLoggedIn(o)); // Check if user is logged in for all requests
 			get("/", UserController.userInfo);
-			get("/subscription/", UserController.subscriptionInfo);
+			get("/subscription/", UserController.subscriptionInfo);	
+			get("/activities/", UserController.activityList);
 			
-			path("/activities", () -> {
+			path("/useractivities", () -> {
 				get("/", UserController.userActivityList);
 				post("/add", UserController.userActivityAdd);
 				
 				path("/:id", () -> {
-					put("/edit", UserController.userActivityEdit);
+					get("/", UserController.userActivityInfo);
 					delete("/delete", UserController.userActivityDel);
 				});
 			});
@@ -122,7 +123,11 @@ public class Server
 		});
 	}
 	
-	public static Gson getGson() { // Returns initialized gson instance
+	public void isGUI() { // Enables debug logging to existing GUI
+		before("*", (a,o) -> Main.getGUI().setSparkRequestInfo(a)); // Catch all the traffic
+	}
+	
+	public Gson getGson() { // Returns initialized gson instance
 		return gson;
 	}
 	
