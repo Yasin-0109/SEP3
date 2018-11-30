@@ -21,6 +21,8 @@ public class Utils {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Time: ");
 		sb.append(new Date());
+		sb.append("\nSession ID: ");
+		sb.append(request.session().id());
 		sb.append("\nMethod: ");
 		sb.append(request.requestMethod());
 		

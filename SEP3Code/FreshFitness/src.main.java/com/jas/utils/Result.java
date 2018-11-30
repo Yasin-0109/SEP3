@@ -9,22 +9,6 @@ import spark.Response;
 public class Result {
 
 	/* Premade result json objects */
-	
-	public static String superUltraError(String reason) {
-		JsonObject jsonCode = new JsonObject();
-		jsonCode.addProperty("reason", reason);
-		
-		return Main.getServer().getGson().toJson(jsonCode);
-	}
-	
-	public static String superUltraOnlineStatus(String status) {
-		JsonObject jsonCode = new JsonObject();
-		jsonCode.addProperty("online", true);
-		jsonCode.addProperty("status", status);
-		
-		return Main.getServer().getGson().toJson(jsonCode);
-	}
-	
 	public static String superUltraStatus(Boolean isOk, String message) {
 		JsonObject jsonCode = new JsonObject();
 		jsonCode.addProperty("status", isOk);

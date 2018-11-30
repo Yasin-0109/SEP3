@@ -12,13 +12,15 @@ public class Server
 	private Gson gson;
 	
 	public void start() {
+		
 		gson = new GsonBuilder()
 				.serializeNulls() // Serialize null values.
 				.setPrettyPrinting() // Make JSON results prettier!
 				.create(); 
 		
 		secure("deploy/keystore3.jks", "aBKzWP2QfZx4XwHdFjtYUj56", null, null);
-		port(8080); // Sets Spark server port
+		System.out.println("Starting API Server at " + Main.getConfig().getProperty("server.port") + " port!");
+		port(Integer.parseInt(Main.getConfig().getProperty("server.port"))); // Sets Spark server port
 		init(); // Initializes Spark server
 		
 		before((o,a) -> a.type("application/json")); // API will return JSON data by default.

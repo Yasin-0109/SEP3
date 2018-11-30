@@ -13,7 +13,7 @@ public class ServerController {
 	};
 	
 	public static Route status = (Request request, Response response) -> {
-		return Result.superUltraOnlineStatus("Working fine... " + System.currentTimeMillis()); // Simple message as example
+		return Result.superUltraStatus(true, "Working fine... " + System.currentTimeMillis()); // Simple message as example
 	};
 	
 	public static Route notFound = (Request request, Response response) -> {
