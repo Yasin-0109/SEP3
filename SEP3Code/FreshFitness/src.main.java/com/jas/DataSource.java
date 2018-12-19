@@ -15,16 +15,23 @@ public class DataSource {
 	static {
 		Properties props = new Properties(); // Make properties variable
 		props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource"); // Set JDBC driver to PostgreSQL one
-		props.setProperty("dataSource.user", "postgres"); // Set login username
-		props.setProperty("dataSource.password", "ecq65tah"); // Set login password
-		props.setProperty("dataSource.databaseName", "postgres"); // Set database
-		props.setProperty("dataSource.portNumber", "5432"); // Set PostgreSQL server port
-		props.setProperty("dataSource.serverName", "localhost"); // Set PostgreSQL server location
-		props.setProperty("dataSource.currentSchema", "freshfitness");
+		props.setProperty("dataSource.user", Main.getConfig().getProperty("db.user")); // Set login username
+		props.setProperty("dataSource.password", Main.getConfig().getProperty("db.password")); // Set login password
+		props.setProperty("dataSource.databaseName", Main.getConfig().getProperty("db.databaseName")); // Set database
+		props.setProperty("dataSource.portNumber", Main.getConfig().getProperty("db.portNumber")); // Set PostgreSQL server port
+		props.setProperty("dataSource.serverName", Main.getConfig().getProperty("db.serverName")); // Set PostgreSQL server location
+		props.setProperty("dataSource.currentSchema", Main.getConfig().getProperty("db.currentSchema")); // Set proper schema
+		props.put("dataSource.logUnclosedConnections", true);
+		//props.setProperty("dataSource.loggerLevel", "DEBUG"); // Set logger level
 		props.put("dataSource.logWriter", new PrintWriter(System.out)); // Return logs to System.out
 		
 		config = new HikariConfig(props); // Initialize new config
 		ds = new HikariDataSource(config); // Initialize HikariCP pool
+		
+		ds.setLeakDetectionThreshold(5000);
+		
+		ds.setMaximumPoolSize(20);
+		ds.setIdleTimeout(30000);
 	}
 	
 	private DataSource() { // Empty initializer

@@ -21,10 +21,9 @@ public class SubscriptionTypes {
 	
 	private static void getDataFromDataBase() {
 		// Initializing subscriptions variable
-		try {
-			String SQL_QUERY = "select * from subscriptiontype;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		String SQL_QUERY = "select * from subscriptiontype;";
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			List<SubscriptionType> temp = new ArrayList<>(); // Initializing temporary subscription types list - temp one so while updating there still exists current data

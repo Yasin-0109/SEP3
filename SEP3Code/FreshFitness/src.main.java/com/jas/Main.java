@@ -3,6 +3,7 @@ package com.jas;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +17,6 @@ import javax.swing.JOptionPane;
 public class Main {
 
 	private static Properties config;
-	private static Server server;
-	private static GUI gui;
 	
 	public static void main(String[] args) {
 		try {
@@ -26,6 +25,14 @@ public class Main {
 			config.load(is); // Load config from input stream of a file
 			
 			is.close();
+			
+			File file = new File("keystore.jks");
+			if (!file.exists()) {
+				Files.copy(
+						Thread.currentThread().getContextClassLoader().getResourceAsStream("keystore.jks"),
+						Paths.get("keystore.jks"),
+						StandardCopyOption.REPLACE_EXISTING);
+			}
 		} catch (IOException ignored) { // Catch some problems
 			try {
 				Files.copy(
@@ -52,19 +59,23 @@ public class Main {
 			return;
 		}
 		
-		// No JavaFX in Eclipse by default? Why...
-		
-		server = new Server();
-		server.start(); // Let's start a server
 		
 		// Check if there's a screen
 		if (!isHeadless()) { // There is a screen
+			System.out.println("Starting GUI...");
 			// Show GUI
-			gui = new GUI(); // Create a GUI
-			server.isGUI(); // Make sure that we've run our code for debugging purpose
+			java.awt.EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					GUI.createGUI(); // Create a GUI
+				}
+			});
 		} else { // No screen
+			System.out.println("There's no screen! Running in console.");
 			// Debug in console?
+			System.out.println("Starting the server...");
+			Server.startServer(); // Let's start a server
 		}
+		System.out.println("Finished initialize sequence.");
 	}
 	
 	private static boolean isHeadless() { // Returns true value if we don't have a screen
@@ -85,11 +96,4 @@ public class Main {
 		return config;
 	}
 	
-	public static Server getServer() {
-		return server;
-	}
-	
-	public static GUI getGUI() {
-		return gui;
-	}
 }

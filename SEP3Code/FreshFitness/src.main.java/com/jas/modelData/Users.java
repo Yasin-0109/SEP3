@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jas.DataSource;
+import com.jas.model.Subscription;
 import com.jas.model.User;
 
 public class Users {
@@ -29,12 +30,11 @@ public class Users {
 	
 	private static void getDataFromDataBase() {
 		// Initializing users variable
-		try {
+		String SQL_QUERY = "select * from users;";
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			
 			// All values from `users` table.
-			String SQL_QUERY = "select * from users;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
 			ResultSet rs = pst.executeQuery(); // Executing query	
 			
 			List<User> temp = new ArrayList<>(); // Initializing temporary users list - temp one so while updating there still exists current data
@@ -65,11 +65,9 @@ public class Users {
 	}
 	
 	public static boolean addUser(User user) { // Adds user to database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "INSERT INTO users (userroleid,firstname,lastname,dateofbirth,email,password,phonenumber) VALUES (?,?,?,?,?,?,?)";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
+		String SQL_QUERY = "INSERT INTO users (userroleid,firstname,lastname,dateofbirth,email,password,phonenumber) VALUES (?,?,?,?,?,?,?)";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);) {
 			pst.setInt(1, user.getUserRole().getId());
 			pst.setString(2, user.getFirstName());
 			pst.setString(3, user.getLastName());
@@ -82,6 +80,7 @@ public class Users {
 			if (rc > 0) { // Insert to database was success
 				ResultSet gk = pst.getGeneratedKeys();
 				if (gk.isBeforeFirst()) {
+					gk.next();
 					user.setId(gk.getInt("id")); // Assign new user Id to it
 					users.add(user);
 					return true;
@@ -94,16 +93,20 @@ public class Users {
 	}
 	
 	public static boolean delUser(User user) { // Removes user from database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "delete from users where id=?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
+		String SQL_QUERY = "delete from users where id=?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);) {
 			pst.setInt(1, user.getId());
 			int rc = pst.executeUpdate();
 			pst.close();
 			
 			if (rc > 0) { // Delete from database was success
+				// if user had subscription then remove it too
+				Subscription sub = Subscriptions.getUserSubscription(user.getId());
+				if (sub != null) {
+					Subscriptions.delSubscription(sub);
+				}
+				
 				users.remove(users.indexOf(user));
 				return true;
 			}
@@ -114,12 +117,11 @@ public class Users {
 	}
 	
 	public static boolean editUser(User user) { // Updates user in database
-		try {
+		String SQL_QUERY = "update users set userroleid = ?, firstname = ?,lastname = ?, dateofbirth = ?, email = ?, password = ?, phonenumber = ? where id = ?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			User old = getUserById(user.getId());
-			
-			Connection conn = DataSource.getConnection();
-			String SQL_QUERY = "update users set userroleid = ?, firstname = ?,lastname = ?, dateofbirth = ?, email = ?, password = ?, phonenumber = ? where id = ?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+		
 			pst.setInt(1, user.getUserRole().getId());
 			pst.setString(2, user.getFirstName());
 			pst.setString(3, user.getLastName());

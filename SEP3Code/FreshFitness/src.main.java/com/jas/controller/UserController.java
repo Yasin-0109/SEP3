@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.jas.Main;
+import com.jas.Server;
 import com.jas.model.Activity;
 import com.jas.model.User;
 import com.jas.model.Workout;
@@ -35,23 +35,23 @@ public class UserController {
 		}
 		
 		User user = Users.getUserByEmail(email);
-		return user.getPassword().equals(password); // Why don't we use any encryption?! It's 2018 - leaks are everywhere :V 
+		return user.getPassword().equals(password); 
 	}
 	
 	public static Route userInfo = (Request request, Response response) -> { // Returns user information
 		User user = Users.getUserById(SessionController.getUserId(request)); // Get logged in user
-		return Result.superUltraJsonData(true, Main.getServer().getGson().toJsonTree(user)); // Return user in JSON
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(user)); // Return user in JSON
 	};
 	
 	public static Route subscriptionInfo = (Request request, Response response) -> {
 		return Result.superUltraJsonData(true,
-				Main.getServer().getGson().toJsonTree(Subscriptions.getUserSubscription(SessionController.getUserId(request)))); // Return user in JSON
+				Server.getGson().toJsonTree(Subscriptions.getUserSubscription(SessionController.getUserId(request)))); // Return user in JSON
 	};
 	
 	// Activities
 	public static Route activityList = (Request request, Response response) -> {
 		return Result.superUltraJsonData(true, 
-				Main.getServer().getGson().toJsonTree(Activities.getActivities())); // Return user in JSON
+				Server.getGson().toJsonTree(Activities.getActivities())); // Return user in JSON
 	};
 	
 	// User activities
@@ -115,7 +115,7 @@ public class UserController {
 	
 	public static Route userActivityList = (Request request, Response response) -> {
 		return Result.superUltraJsonData(true, 
-				Main.getServer().getGson().toJsonTree(UserActivities.getUserActivities(SessionController.getUserId(request)))); // Return user in JSON
+				Server.getGson().toJsonTree(UserActivities.getUserActivities(SessionController.getUserId(request)))); // Return user in JSON
 	};
 	
 	public static Route userActivityInfo = (Request request, Response response) -> {
@@ -142,7 +142,7 @@ public class UserController {
 		}
 		
 		return Result.superUltraJsonData(true, 
-				Main.getServer().getGson().toJsonTree(activity)); // Return user in JSON
+				Server.getGson().toJsonTree(activity)); // Return user in JSON
 	};
 	
 	// Workouts
@@ -243,7 +243,7 @@ public class UserController {
 		}
 		
 		// Workout type
-		if (request.queryParams("workoutType") != null && !request.queryParams("workoutType").isEmpty()) { // Check if we have workout type in request
+		if (request.queryParams("workoutTypeId") != null && !request.queryParams("workoutTypeId").isEmpty()) { // Check if we have workout type in request
 			int workoutTypeId;
 			try {
 				workoutTypeId = Integer.parseInt(request.queryParams("workoutTypeId")); // Parsing id as int
@@ -300,7 +300,11 @@ public class UserController {
 	
 	public static Route workoutList = (Request request, Response response) -> {
 		return Result.superUltraJsonData(true,
-				Main.getServer().getGson().toJsonTree(Workouts.getUserWorkouts(SessionController.getUserId(request)))); // Return workouts in JSON
+				Server.getGson().toJsonTree(Workouts.getUserWorkouts(SessionController.getUserId(request)))); // Return workouts in JSON
+	};
+	
+	public static Route workoutTypeList = (Request request, Response response) -> {
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(WorkoutTypes.getWorkoutTypes())); // Returns all data in JSON
 	};
 	
 }

@@ -6,6 +6,7 @@ import com.jas.model.UserRole;
 import com.jas.modelData.UserRoles;
 
 import spark.Request;
+import spark.Response;
 
 public class Utils {
 
@@ -40,6 +41,12 @@ public class Utils {
 		
 		sb.append("\nBody:\n");
 		sb.append(request.body());
+		return sb.toString();
+	}
+	
+	public static String responseToString(Response response) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(response.body());
 		return sb.toString();
 	}
 }

@@ -22,10 +22,8 @@ public class WorkoutTypes {
 	
 	private static void getDataFromDataBase() {
 		// Initializing workoutTypes variable
-		try {
-			String SQL_QUERY = "select * from workouttype;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		String SQL_QUERY = "select * from workouttype;";
+		try(Connection conn = DataSource.getConnection();PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) { // Getting connection to database, preparing the query
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			List<WorkoutType> temp = new ArrayList<>(); // Initializing temporary workout types list - temp one so while updating there still exists current data
@@ -45,17 +43,17 @@ public class WorkoutTypes {
 	}
 	
 	public static boolean addWorkoutType(WorkoutType workoutType) { // Adds workout type to database
-		try {
-			Connection conn = DataSource.getConnection();
+		String SQL_QUERY = "insert into workouttype(type) values (?)";
+		try (Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);) {
 			
-			String SQL_QUERY = "insert into workouttype(type) values (?)";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
 			pst.setString(1, workoutType.getType());
 			int rc = pst.executeUpdate();
 			
 			if (rc > 0) { // Insert to database was success
 				ResultSet gk = pst.getGeneratedKeys();
 				if (gk.isBeforeFirst()) {
+					gk.next();
 					workoutType.setId(gk.getInt("id")); // Assign new workout type Id to it
 					workoutTypes.add(workoutType);
 					return true;
@@ -68,11 +66,10 @@ public class WorkoutTypes {
 	}
 	
 	public static boolean delWorkoutType(WorkoutType workoutType) { // Removes workout type from database
-		try {
-			Connection conn = DataSource.getConnection();
+		String SQL_QUERY = "delete from workouttype where id=?";
+		try (Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			
-			String SQL_QUERY = "delete from workouttype where id=?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
 			pst.setInt(1, workoutType.getId());
 			int rc = pst.executeUpdate();
 			pst.close();
@@ -88,12 +85,12 @@ public class WorkoutTypes {
 	}
 	
 	public static boolean editWorkoutType(WorkoutType workoutType) { // Updates workout type in database
-		try {
+		String SQL_QUERY = "update workouttype set type = ? where id = ?";
+		try (Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
+			
 			WorkoutType old = getWorkoutTypeById(workoutType.getId());
 			
-			Connection conn = DataSource.getConnection();
-			String SQL_QUERY = "update workouttype set type = ? where id = ?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
 			pst.setString(1, workoutType.getType());
 			pst.setInt(2, workoutType.getId());
 			int rc = pst.executeUpdate();

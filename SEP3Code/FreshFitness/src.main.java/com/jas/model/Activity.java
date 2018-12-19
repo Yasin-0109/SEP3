@@ -16,14 +16,16 @@ public class Activity {
 	public Timestamp startTime;
 	public Timestamp endTime;
 	private int instructorId;
+	private String instructorName;
 	
-	public Activity(int id, String name, Timestamp startTime, Timestamp endTime, int instructorId)
+	public Activity(int id, String name, Timestamp startTime, Timestamp endTime, int instructorId, String instructorName)
 	{
 		this.id=id;
 		this.name=name;
 		this.startTime=startTime;
 		this.endTime=endTime;
 		this.instructorId = instructorId;
+		this.instructorName = instructorName;
 	}
 
 	public int getId() {
@@ -64,6 +66,14 @@ public class Activity {
 	
 	public void setInstructorId(int instructorId) {
 		this.instructorId = instructorId;
+	}
+	
+	public String getInstructorName() {
+		return instructorName;
+	}
+	
+	public void setInstructorName(String instructorName) {
+		this.instructorName = instructorName;
 	}
 	
 	public boolean equals(Object obj)

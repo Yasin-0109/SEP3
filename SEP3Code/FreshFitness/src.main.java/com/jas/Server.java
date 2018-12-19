@@ -9,16 +9,20 @@ import com.jas.utils.Utils;
 
 public class Server 
 {
-	private Gson gson;
+	private static Gson gson;
 	
-	public void start() {
+	public static void startServer() {
 		
 		gson = new GsonBuilder()
 				.serializeNulls() // Serialize null values.
 				.setPrettyPrinting() // Make JSON results prettier!
 				.create(); 
 		
-		secure("deploy/keystore3.jks", "aBKzWP2QfZx4XwHdFjtYUj56", null, null);
+		initExceptionHandler(e -> { // Print out problems with the server
+			e.printStackTrace();
+		});
+		
+		secure("keystore.jks", "aBKzWP2QfZx4XwHdFjtYUj56", null, null);
 		System.out.println("Starting API Server at " + Main.getConfig().getProperty("server.port") + " port!");
 		port(Integer.parseInt(Main.getConfig().getProperty("server.port"))); // Sets Spark server port
 		init(); // Initializes Spark server
@@ -32,7 +36,7 @@ public class Server
 		get("/status", ServerController.status); // Add status route
 		
 		// Admin routes
-		path("/admin", () -> {
+		path("/admin", () -> { 
 			before("/*", (o,a) -> SessionController.isLoggedInAs(o, Utils.getAdminRole())); // Check if user is an admin for all reqests
 			
 			path("/activities", () -> {
@@ -45,8 +49,13 @@ public class Server
 				});
 			});
 			
+			path("/roles", () -> {
+				get("/", AdminController.userRolesList);
+			});
+			
 			path("/subscriptions", () -> {
 				get("/", AdminController.subscriptionList);
+				get("/types/", AdminController.subscriptionTypesList);
 				post("/add", AdminController.subscriptionAdd);
 				
 				path("/:id", () -> {
@@ -58,6 +67,8 @@ public class Server
 			path("/users", () -> {
 				get("/", AdminController.userList);
 				post("/add", AdminController.userAdd);
+				
+				post("/getbyemail", AdminController.userInfoByEmail);
 				
 				path("/:id", () -> {
 					get("/", AdminController.userInfo);
@@ -115,6 +126,7 @@ public class Server
 			
 			path("/workouts", () -> {
 				get("/", UserController.workoutList);
+				get("/types", UserController.workoutTypeList);
 				post("/add", UserController.workoutAdd);
 				
 				path("/:id", () -> {
@@ -125,11 +137,12 @@ public class Server
 		});
 	}
 	
-	public void isGUI() { // Enables debug logging to existing GUI
-		before("*", (a,o) -> Main.getGUI().setSparkRequestInfo(a)); // Catch all the traffic
+	public static void isGUI() { // Enables debug logging to existing GUI
+		before("*", (a,o) -> GUI.setSparkRequestInfo(a)); // Catch all the traffic
+		after("*", (a,o) -> GUI.setSparkResponseInfo(o)); // Append all response
 	}
 	
-	public Gson getGson() { // Returns initialized gson instance
+	public static Gson getGson() { // Returns initialized gson instance
 		return gson;
 	}
 	

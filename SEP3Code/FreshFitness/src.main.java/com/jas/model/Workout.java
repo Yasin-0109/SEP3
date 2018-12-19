@@ -67,16 +67,49 @@ public class Workout {
 		this.date = date;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + id;
+		result = prime * result + numberOfWorkouts;
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + userId;
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Workout)) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		Workout other = (Workout) obj;
-		return id == other.getId() && userId == other.getUserId() && type.equals(other.getType()) && numberOfWorkouts == other.getNumberOfWorkouts() ;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (id != other.id)
+			return false;
+		if (numberOfWorkouts != other.numberOfWorkouts)
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		if (userId != other.userId)
+			return false;
+		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Workout [id=" + id + ", userId=" + userId + "type=" + type + ", numberOfWorkouts=" + numberOfWorkouts + "]";
+		return "Workout [id=" + id + ", userId=" + userId + ", type=" + type + ", numberOfWorkouts=" + numberOfWorkouts
+				+ ", date=" + date + "]";
 	}
 }

@@ -4,9 +4,11 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.jas.Main;
+import com.jas.Server;
 import com.jas.model.Activity;
+import com.jas.model.User;
 import com.jas.modelData.Activities;
+import com.jas.modelData.Users;
 import com.jas.utils.Result;
 
 import spark.Request;
@@ -53,7 +55,9 @@ public class InstructorController {
 			return Result.superUltraStatus(false, "Invalid end time value!");
 		}
 		
-		Activity activity = new Activity(-1, name, startTime, endTime, SessionController.getUserId(request)); // Creating activity based on request
+		User user = Users.getUserById(SessionController.getUserId(request));
+		
+		Activity activity = new Activity(-1, name, startTime, endTime, user.getId(), user.getFirstName() + " " + user.getLastName()); // Creating activity based on request
 		boolean result = Activities.addActivity(activity); // Adding activity
 		if (!result) { // Check if it has been added without any problems
 			response.status(500); // Return 500 - Internal Server Error
@@ -108,12 +112,12 @@ public class InstructorController {
 		}
 		
 		// Name
-		if (request.queryParams("name") != null || !request.queryParams("name").isEmpty()) { // Check if we have name in request
+		if (request.queryParams("name") != null && !request.queryParams("name").isEmpty()) { // Check if we have name in request
 			activity.setName(request.queryParams("name")); // Parsing name as string
 		}
 		
 		// Start time
-		if (request.queryParams("startTime") != null || !request.queryParams("startTime").isEmpty()) { // Check if we have start time in request
+		if (request.queryParams("startTime") != null && !request.queryParams("startTime").isEmpty()) { // Check if we have start time in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("startTime")); // Parsing date
@@ -125,7 +129,7 @@ public class InstructorController {
 		}
 		
 		// End time
-		if (request.queryParams("endTime") != null || !request.queryParams("endTime").isEmpty()) { // Check if we have end time in request
+		if (request.queryParams("endTime") != null && !request.queryParams("endTime").isEmpty()) { // Check if we have end time in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("endTime")); // Parsing date
@@ -146,7 +150,7 @@ public class InstructorController {
 	
 	public static Route activityList = (Request request, Response response) -> {
 		return Result.superUltraJsonData(true,
-				Main.getServer().getGson().toJsonTree(Activities.getInstructorActivities(SessionController.getUserId(request)))); // Returns all data in JSON
+				Server.getGson().toJsonTree(Activities.getInstructorActivities(SessionController.getUserId(request)))); // Returns all data in JSON
 	};
 	
 }

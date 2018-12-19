@@ -22,10 +22,9 @@ public class Subscriptions {
 	
 	private static void getDataFromDataBase() {
 		// Initializing variable
-		try {
-			String SQL_QUERY = "select * from subscription;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		String SQL_QUERY = "select * from subscription;";
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			List<Subscription> temp = new ArrayList<>(); // Initializing temporary list - temp one so while updating there still exists current data
@@ -42,7 +41,7 @@ public class Subscriptions {
 
 			subscriptions = temp; // Assigning temporary list to variable
 		} catch (SQLException error) { // Catch any SQL errors
-			System.out.println("[Error] Couldn't initialize Subscription types data! Reason: " + error.getMessage()); // Show it to the console
+			System.out.println("[Error] Couldn't initialize Subscriptions data! Reason: " + error.getMessage()); // Show it to the console
 		}
 	}
 	
@@ -51,12 +50,10 @@ public class Subscriptions {
 	}
 	
 	public static boolean addSubscription(Subscription subscription) { // Adds subscription to database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "insert into subscription (userid, validfrom, validto, subscriptiontypeid) values (?,?,?,?)";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
-			pst.setInt(1, subscription.getId());
+		String SQL_QUERY = "insert into subscription (userid, validfrom, validto, subscriptiontypeid) values (?,?,?,?)";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);) {
+			pst.setInt(1, subscription.getUserId());
 			pst.setTimestamp(2, subscription.getValidFrom());
 			pst.setTimestamp(3, subscription.getValidTo());
 			pst.setInt(4, subscription.getSubscriptionType().getId());
@@ -65,6 +62,7 @@ public class Subscriptions {
 			if (rc > 0) { // Insert to database was success
 				ResultSet gk = pst.getGeneratedKeys();
 				if (gk.isBeforeFirst()) {
+					gk.next();
 					subscription.setId(gk.getInt("id")); // Assigns new id to subscription
 					subscriptions.add(subscription);
 					return true;
@@ -77,11 +75,9 @@ public class Subscriptions {
 	}
 	
 	public static boolean delSubscription(Subscription subscription) { // Removes subscription from database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "delete from subscription where id=?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+		String SQL_QUERY = "delete from subscription where id=?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			pst.setInt(1, subscription.getId());
 			int rc = pst.executeUpdate();
 			pst.close();
@@ -97,12 +93,11 @@ public class Subscriptions {
 	}
 	
 	public static boolean editSubscription(Subscription subscription) { // Updates subscription in database
-		try {
+		String SQL_QUERY = "update subscription set userid = ?, validfrom = ?, validto = ?, subscriptiontypeid = ? where id = ?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			Subscription old = getSubscriptionById(subscription.getId());
 			
-			Connection conn = DataSource.getConnection();
-			String SQL_QUERY = "update activity set userid = ?, validfrom = ?, validto = ?, subscriptiontypeid = ? where id = ?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
 			pst.setInt(1, subscription.getUserId());
 			pst.setTimestamp(2, subscription.getValidFrom());
 			pst.setTimestamp(3, subscription.getValidTo());

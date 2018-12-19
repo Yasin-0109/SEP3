@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.jas.DataSource;
 import com.jas.model.Activity;
+import com.jas.model.User;
 
 public class Activities {
 
@@ -21,22 +22,28 @@ public class Activities {
 	}
 	
 	private static void getDataFromDataBase() {
+		String SQL_QUERY = "select * from activity;";
 		// Initializing activities variable
-		try {
-			String SQL_QUERY = "select * from activity;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			List<Activity> temp = new ArrayList<>(); // Initializing temporary activities list - temp one so while updating there still exists current data
 			
 			while (rs.next()) {
+				String iName = "Unknown";
+				User user = Users.getUserById(rs.getInt("instructorID"));
+				if (user != null) {
+					iName = user.getFirstName() + " " + user.getLastName();
+				}
+				
 				temp.add(new Activity(
 					rs.getInt("id"), 
 					rs.getString("name"), 
 					rs.getTimestamp("startTime"), 
 					rs.getTimestamp("endTime"),
-					rs.getInt("instructorID")
+					rs.getInt("instructorID"),
+					iName
 				));
 			}
 
@@ -52,11 +59,10 @@ public class Activities {
 	}
 	
 	public static boolean addActivity(Activity activity) { // Adds activity to database
-		try {
-			Connection conn = DataSource.getConnection();
+		String SQL_QUERY = "insert into activity (name, startTime, endTime, instructorID) values (?,?,?,?)";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);) {
 			
-			String SQL_QUERY = "insert into activity (name, startTime, endTime, instructorID) values (?,?,?,?)";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
 			pst.setString(1, activity.getName());
 			pst.setTimestamp(2, activity.getStartTime());
 			pst.setTimestamp(3, activity.getEndTime());
@@ -66,6 +72,7 @@ public class Activities {
 			if (rc > 0) { // Insert to database was success
 				ResultSet gk = pst.getGeneratedKeys();
 				if (gk.isBeforeFirst()) {
+					gk.next();
 					activity.setId(gk.getInt("id")); // Assigns new id to activity
 					activities.add(activity);
 					return true;
@@ -78,12 +85,12 @@ public class Activities {
 	}
 	
 	public static boolean delActivity(Activity activity) { // Removes activity from database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "delete from activity where id=?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+		String SQL_QUERY = "delete from activity where id=?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			pst.setInt(1, activity.getId());
+			
+			UserActivities.delUserActivities(activity); // Remove user activities of this activity first.
 			int rc = pst.executeUpdate();
 			pst.close();
 			
@@ -98,12 +105,11 @@ public class Activities {
 	}
 	
 	public static boolean editActivity(Activity activity) { // Updates activity in database
-		try {
+		String SQL_QUERY = "update activity set name = ?, startTime = ?, endTime = ?, instructorID = ? where id = ?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			Activity old = getActivityById(activity.getId());
 			
-			Connection conn = DataSource.getConnection();
-			String SQL_QUERY = "update activity set name = ?, startTime = ?, endTime = ?, instructorID = ? where id = ?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
 			pst.setString(1, activity.getName());
 			pst.setTimestamp(2, activity.getStartTime());
 			pst.setTimestamp(3, activity.getEndTime());

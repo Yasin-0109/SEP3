@@ -20,10 +20,9 @@ public class UserRoles {
 	
 	private static void getDataFromDataBase() {
 		// Initializing user roles variable
-		try {
-			String SQL_QUERY = "select * from userrole;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		String SQL_QUERY = "select * from userrole;";
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			List<UserRole> temp = new ArrayList<>(); // Initializing temporary user roles list - temp one so while updating there still exists current data

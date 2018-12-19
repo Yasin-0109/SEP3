@@ -22,10 +22,9 @@ public class UserActivities {
 	
 	private static void getDataFromDataBase() {
 		// Initializing userActivities variable
-		try {
-			String SQL_QUERY = "select * from userActivity;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		String SQL_QUERY = "select * from userActivity;";
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			HashMap<Integer, List<Integer>> temp = new HashMap<>(); // Initializing temporary userActivities list - temp one so while updating there still exists current data
@@ -54,11 +53,9 @@ public class UserActivities {
 	}
 	
 	public static boolean addUserActivity(User user, Activity activity) {
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "insert into userActivity(userid, activityid) values (?,?)";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+		String SQL_QUERY = "insert into userActivity(userid, activityid) values (?,?)";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			pst.setInt(1, user.getId());
 			pst.setInt(2, activity.getId());
 			int rc = pst.executeUpdate();
@@ -81,12 +78,28 @@ public class UserActivities {
 		return false;
 	}
 	
-	public static boolean delUserActivity(User user, Activity activity) {
-		try {
-			Connection conn = DataSource.getConnection();
+	public static boolean delUserActivities(Activity activity) {
+		String SQL_QUERY = "delete from userActivity where activityid=?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
+			pst.setInt(1, activity.getId());
+			int rc = pst.executeUpdate();
+			pst.close();
 			
-			String SQL_QUERY = "delete from userActivity where userid=? and activityid=?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+			if (rc > 0) { // Delete from database was success
+				getDataFromDataBase();
+				return true;
+			}
+		} catch (SQLException error) {
+			System.out.println("[Error] Couldn't delete user activity from database! Reason: " + error.getMessage()); // Show it to the console
+		}
+		return false;
+	}
+	
+	public static boolean delUserActivity(User user, Activity activity) {
+		String SQL_QUERY = "delete from userActivity where userid=? and activityid=?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			pst.setInt(1, user.getId());
 			pst.setInt(2, activity.getId());
 			int rc = pst.executeUpdate();
@@ -95,18 +108,18 @@ public class UserActivities {
 			if (rc > 0) { // Delete from database was success
 				if (userActivities.containsKey(user.getId())) {
 					List<Integer> uA = userActivities.get(user.getId());
-					uA.remove(activity.getId());
+					uA.remove(uA.indexOf(activity.getId()));
 					userActivities.put(user.getId(), uA);
 				}
 				return true;
 			}
 		} catch (SQLException error) {
-			System.out.println("[Error] Couldn't delete activity from database! Reason: " + error.getMessage()); // Show it to the console
+			System.out.println("[Error] Couldn't delete user activity from database! Reason: " + error.getMessage()); // Show it to the console
 		}
 		return false;
 	}
 	
 	public static List<Integer> getUserActivities(int id) { // Returns activities by user ID
-		return userActivities.getOrDefault(id, null);
+		return userActivities.getOrDefault(id, new ArrayList<Integer>());
 	}
 }

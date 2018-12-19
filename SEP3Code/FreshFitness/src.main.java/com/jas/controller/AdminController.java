@@ -11,7 +11,7 @@ import java.util.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-import com.jas.Main;
+import com.jas.Server;
 import com.jas.modelData.Activities;
 import com.jas.modelData.SubscriptionTypes;
 import com.jas.modelData.Subscriptions;
@@ -73,12 +73,14 @@ public class AdminController {
 			response.status(400); // Return 400 - Bad Request
 			return Result.superUltraStatus(false, "Invalid instructor id value!");
 		}
-		if (Users.getUserById(instructorId) == null) {
+		
+		User instructor = Users.getUserById(instructorId);
+		if (instructor == null) {
 			response.status(400); // Return 400 - Bad Request
 			return Result.superUltraStatus(false, "Invalid instructor id!");
 		}
 		
-		Activity activity = new Activity(-1, name, startTime, endTime, instructorId); // Creating activity based on request
+		Activity activity = new Activity(-1, name, startTime, endTime, instructorId, instructor.getFirstName() + " " + instructor.getLastName()); // Creating activity based on request
 		boolean result = Activities.addActivity(activity); // Adding activity
 		if (!result) { // Check if it has been added without any problems
 			response.status(500); // Return 500 - Internal Server Error
@@ -128,12 +130,12 @@ public class AdminController {
 		
 		
 		// Name
-		if (request.queryParams("name") != null || !request.queryParams("name").isEmpty()) { // Check if we have name in request
+		if (request.queryParams("name") != null && !request.queryParams("name").isEmpty()) { // Check if we have name in request
 			activity.setName(request.queryParams("name")); // Parsing name as string
 		}
 		
 		// Start time
-		if (request.queryParams("startTime") != null || !request.queryParams("startTime").isEmpty()) { // Check if we have start time in request
+		if (request.queryParams("startTime") != null && !request.queryParams("startTime").isEmpty()) { // Check if we have start time in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("startTime")); // Parsing date
@@ -145,7 +147,7 @@ public class AdminController {
 		}
 		
 		// End time
-		if (request.queryParams("endTime") != null || !request.queryParams("endTime").isEmpty()) { // Check if we have end time in request
+		if (request.queryParams("endTime") != null && !request.queryParams("endTime").isEmpty()) { // Check if we have end time in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("endTime")); // Parsing date
@@ -158,19 +160,22 @@ public class AdminController {
 		
 		// Instructor ID
 		int instructorId = -1;
-		if (request.queryParams("instructorId") != null || !request.queryParams("instructorId").isEmpty()) { // Check if we have instructor id in request
+		if (request.queryParams("instructorId") != null && !request.queryParams("instructorId").isEmpty()) { // Check if we have instructor id in request
 			try {
 				instructorId = Integer.parseInt(request.queryParams("instructorId")); // Parsing instructorId as integer
 			} catch (NumberFormatException e) {
 				response.status(400); // Return 400 - Bad Request
 				return Result.superUltraStatus(false, "Invalid instructor id value!");
 			}
+			
+			User instructor = Users.getUserById(instructorId);
+			if (instructor == null) {
+				response.status(400); // Return 400 - Bad Request
+				return Result.superUltraStatus(false, "Invalid instructor id!");
+			}
+			activity.setInstructorId(instructorId);
+			activity.setInstructorName(instructor.getFirstName() + " " + instructor.getLastName());
 		}
-		if (Users.getUserById(instructorId) == null) {
-			response.status(400); // Return 400 - Bad Request
-			return Result.superUltraStatus(false, "Invalid instructor id!");
-		}
-		activity.setInstructorId(instructorId);
 
 		boolean result = Activities.editActivity(activity); // Edit activity to have new data
 		if (!result) { // Check if it has been edited without any problems
@@ -181,7 +186,12 @@ public class AdminController {
 	};
 	
 	public static Route activityList = (Request request, Response response) -> {
-		return Result.superUltraJsonData(true, Main.getServer().getGson().toJsonTree(Activities.getActivities())); // Returns all data in JSON
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(Activities.getActivities())); // Returns all data in JSON
+	};
+	
+	// User Roles
+	public static Route userRolesList = (Request request, Response response) -> {
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(UserRoles.getUserRoles())); // Returns all data in JSON
 	};
 	
 	// Subscription
@@ -189,13 +199,13 @@ public class AdminController {
 		// Temporary variables
 		Integer userId;
 		Timestamp validFrom;
-		Timestamp validTo;
+		Timestamp validTo = null;
 		SubscriptionType subscriptionType;
 		
 		// Checking if we have all required params passed in request
 		if (request.queryParams("userId") == null || request.queryParams("userId").isEmpty() ||
 			request.queryParams("validFrom") == null || request.queryParams("validFrom").isEmpty() ||
-			request.queryParams("validTo") == null || request.queryParams("validTo").isEmpty() ||
+			/*request.queryParams("validTo") == null || request.queryParams("validTo").isEmpty() ||*/ // Can be null
 			request.queryParams("subscriptionType") == null || request.queryParams("subscriptionType").isEmpty()) {
 			response.status(400); // Return 400 - Bad Request
 			return Result.superUltraStatus(false, "Invalid request!");
@@ -224,13 +234,15 @@ public class AdminController {
 		}
 		
 		// Valid to
-		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
-		    Date parsedDate = dateFormat.parse(request.queryParams("validTo")); // Parsing date
-		    validTo = new Timestamp(parsedDate.getTime()); // Converting it to timestamp
-		} catch (Exception ignored) {
-			response.status(400); // Return 400 - Bad Request
-			return Result.superUltraStatus(false, "Invalid valid to value!");
+		if (request.queryParams("validTo") != null && !request.queryParams("validTo").isEmpty()) {
+			try {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
+			    Date parsedDate = dateFormat.parse(request.queryParams("validTo")); // Parsing date
+			    validTo = new Timestamp(parsedDate.getTime()); // Converting it to timestamp
+			} catch (Exception ignored) {
+				response.status(400); // Return 400 - Bad Request
+				return Result.superUltraStatus(false, "Invalid valid to value!");
+			}
 		}
 		
 		// Subscription type
@@ -294,7 +306,7 @@ public class AdminController {
 		}
 		
 		// Valid from
-		if (request.queryParams("validFrom") != null || !request.queryParams("validFrom").isEmpty()) { // Check if we have validFrom in request
+		if (request.queryParams("validFrom") != null && !request.queryParams("validFrom").isEmpty()) { // Check if we have validFrom in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("validFrom")); // Parsing date
@@ -306,7 +318,7 @@ public class AdminController {
 		}
 		
 		// End time
-		if (request.queryParams("validTo") != null || !request.queryParams("validTo").isEmpty()) { // Check if we have validTo in request
+		if (request.queryParams("validTo") != null && !request.queryParams("validTo").isEmpty()) { // Check if we have validTo in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("validTo")); // Parsing date
@@ -319,7 +331,7 @@ public class AdminController {
 		
 		// Subscription type
 		SubscriptionType sT = null;
-		if (request.queryParams("subscriptionType") != null || !request.queryParams("subscriptionType").isEmpty()) { // Check if we have subscription type in request
+		if (request.queryParams("subscriptionType") != null && !request.queryParams("subscriptionType").isEmpty()) { // Check if we have subscription type in request
 			try {
 				sT = SubscriptionTypes.getSubscriptionTypeById(Integer.parseInt(request.queryParams("subscriptionType"))); // Parsing subscriptionType as integer
 			} catch (NumberFormatException e) {
@@ -343,7 +355,11 @@ public class AdminController {
 	};
 	
 	public static Route subscriptionList = (Request request, Response response) -> {
-		return Result.superUltraJsonData(true, Main.getServer().getGson().toJsonTree(Subscriptions.getSubscriptions())); // Returns all data in JSON
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(Subscriptions.getSubscriptions())); // Returns all data in JSON
+	};
+	
+	public static Route subscriptionTypesList = (Request request, Response response) -> {
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(SubscriptionTypes.getSubscriptionTypes())); // Returns all data in JSON
 	};
 	
 	// Users
@@ -462,7 +478,7 @@ public class AdminController {
 		}
 		
 		// User role
-		if (request.queryParams("userRoleId") != null || !request.queryParams("userRoleId").isEmpty()) { // Check if we have userRoleId in request
+		if (request.queryParams("userRoleId") != null && !request.queryParams("userRoleId").isEmpty()) { // Check if we have userRoleId in request
 			UserRole userRole;
 			try {
 				userRole = UserRoles.getUserRoleById(Integer.parseInt(request.queryParams("userRoleId"))); // Parsing as int
@@ -478,17 +494,17 @@ public class AdminController {
 		}
 		
 		// First name
-		if (request.queryParams("firstName") != null || !request.queryParams("firstName").isEmpty()) { // Check if we have firstName in request
+		if (request.queryParams("firstName") != null && !request.queryParams("firstName").isEmpty()) { // Check if we have firstName in request
 			user.setFirstName(request.queryParams("firstName"));
 		}
 		
 		// Last name
-		if (request.queryParams("lastName") != null || !request.queryParams("lastName").isEmpty()) { // Check if we have lastName in request
+		if (request.queryParams("lastName") != null && !request.queryParams("lastName").isEmpty()) { // Check if we have lastName in request
 			user.setLastName(request.queryParams("lastName"));
 		}
 		
 		// Date of birth
-		if (request.queryParams("dateOfBirth") != null || !request.queryParams("dateOfBirth").isEmpty()) { // Check if we have dateOfBirth in request
+		if (request.queryParams("dateOfBirth") != null && !request.queryParams("dateOfBirth").isEmpty()) { // Check if we have dateOfBirth in request
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS"); // Initializing date format
 			    Date parsedDate = dateFormat.parse(request.queryParams("dateOfBirth")); // Parsing date
@@ -500,17 +516,17 @@ public class AdminController {
 		}
 		
 		// Email
-		if (request.queryParams("email") != null || !request.queryParams("email").isEmpty()) { // Check if we have email in request
+		if (request.queryParams("email") != null && !request.queryParams("email").isEmpty()) { // Check if we have email in request
 			user.setEmail(request.queryParams("email"));
 		}
 		
 		// Password
-		if (request.queryParams("password") != null || !request.queryParams("password").isEmpty()) { // Check if we have password in request
+		if (request.queryParams("password") != null && !request.queryParams("password").isEmpty()) { // Check if we have password in request
 			user.setPassword(request.queryParams("password"));
 		}
 		
 		// Phone number
-		if (request.queryParams("phoneNumber") != null || !request.queryParams("phoneNumber").isEmpty()) { // Check if we have phoneNumber in request
+		if (request.queryParams("phoneNumber") != null && !request.queryParams("phoneNumber").isEmpty()) { // Check if we have phoneNumber in request
 			try {
 				user.setPhoneNumber(Integer.parseInt(request.queryParams("phoneNumber"))); // Parsing as int
 			} catch (NumberFormatException e) {
@@ -528,7 +544,23 @@ public class AdminController {
 	};
 	
 	public static Route userList = (Request request, Response response) -> {
-		return Result.superUltraJsonData(true, Main.getServer().getGson().toJsonTree(Users.getUsers())); // Returns all data in JSON
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(Users.getUsers())); // Returns all data in JSON
+	};
+	
+	public static Route userInfoByEmail = (Request request, Response response) -> {
+		String email = request.queryParams("email"); // Initialize local email variable
+		if (email == null || email.isEmpty()) {
+			response.status(400); // Return 400 - Bad Request
+			return Result.superUltraStatus(false, "Invalid request!");
+		}
+		
+		User u = Users.getUserByEmail(email); // Get user by email
+		if (u == null) { // Check if user doesn't exist
+			response.status(404); // Return 404 - Not Found
+			return Result.superUltraStatus(false, "User with specified email doesn't exist!");
+		}
+		
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(u)); // Return data in JSON
 	};
 	
 	public static Route userInfo = (Request request, Response response) -> {
@@ -547,7 +579,7 @@ public class AdminController {
 		}
 		
 		response.status(200); // Return 200 - Success with response body
-		return Result.superUltraJsonData(true, Main.getServer().getGson().toJsonTree(user)); // Return data in JSON
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(user)); // Return data in JSON
 	};
 	
 	// Workout Types
@@ -614,7 +646,7 @@ public class AdminController {
 		}
 		
 		// Type
-		if (request.queryParams("type") != null || !request.queryParams("type").isEmpty()) { // Check if we have type in request
+		if (request.queryParams("type") != null && !request.queryParams("type").isEmpty()) { // Check if we have type in request
 			workoutType.setType(request.queryParams("type"));
 		}
 		
@@ -627,7 +659,7 @@ public class AdminController {
 	};
 	
 	public static Route workoutTypeList = (Request request, Response response) -> {
-		return Result.superUltraJsonData(true, Main.getServer().getGson().toJsonTree(WorkoutTypes.getWorkoutTypes())); // Returns all data in JSON
+		return Result.superUltraJsonData(true, Server.getGson().toJsonTree(WorkoutTypes.getWorkoutTypes())); // Returns all data in JSON
 	};
 
 }

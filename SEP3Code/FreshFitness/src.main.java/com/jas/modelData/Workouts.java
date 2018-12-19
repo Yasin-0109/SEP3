@@ -22,10 +22,9 @@ public class Workouts {
 	
 	private static void getDataFromDataBase() {
 		// Initializing workouts variable
-		try {
-			String SQL_QUERY = "select * from workout;";
-			Connection conn = DataSource.getConnection(); // Getting connection to database
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); // Preparing the query
+		String SQL_QUERY = "select * from workout;";
+		try(Connection conn = DataSource.getConnection(); // Getting connection to database
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY); /* Preparing the query */) {
 			ResultSet rs = pst.executeQuery(); // Executing query
 			
 			List<Workout> temp = new ArrayList<>(); // Initializing temporary workout list - temp one so while updating there still exists current data
@@ -43,7 +42,7 @@ public class Workouts {
 			workouts = temp; // Assigning temporary workout list to workouts variable
 			pst.close();
 		} catch (SQLException error) { // Catch any SQL errors
-			System.out.println("[Error] Couldn't initialize Subscription types data! Reason: " + error.getMessage()); // Show it to the console
+			System.out.println("[Error] Couldn't initialize Workouts data! Reason: " + error.getMessage()); // Show it to the console
 		}
 	}
 	
@@ -52,11 +51,9 @@ public class Workouts {
 	}
 	
 	public static boolean addWorkout(Workout workout) { // Adds workout to database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "insert into workout(userid, workouttypeid, numberofworkouts, date) values (?,?,?,?)";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
+		String SQL_QUERY = "insert into workout(userid, workouttypeid, numberofworkouts, date) values (?,?,?,?)";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY, Statement.RETURN_GENERATED_KEYS);) {
 			pst.setInt(1, workout.getUserId());
 			pst.setInt(2, workout.getType().getId());
 			pst.setInt(3, workout.getNumberOfWorkouts());
@@ -66,6 +63,7 @@ public class Workouts {
 			if (rc > 0) { // Insert to database was success
 				ResultSet gk = pst.getGeneratedKeys();
 				if (gk.isBeforeFirst()) {
+					gk.next();
 					workout.setId(gk.getInt("id")); // Assign new workout Id to it
 					workouts.add(workout);
 					return true;
@@ -78,11 +76,9 @@ public class Workouts {
 	}
 	
 	public static boolean delWorkout(Workout workout) { // Removes workout from database
-		try {
-			Connection conn = DataSource.getConnection();
-			
-			String SQL_QUERY = "delete from workout where id=?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
+		String SQL_QUERY = "delete from workout where id=?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			pst.setInt(1, workout.getId());
 			int rc = pst.executeUpdate();
 			pst.close();
@@ -98,12 +94,11 @@ public class Workouts {
 	}
 	
 	public static boolean editWorkout(Workout workout) { // Updates workout in database
-		try {
+		String SQL_QUERY = "update workout set userid = ?, workouttypeid = ?, numberofworkouts = ?, date = ? where id = ?";
+		try(Connection conn = DataSource.getConnection();
+			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);) {
 			Workout old = getWorkoutById(workout.getId());
 			
-			Connection conn = DataSource.getConnection();
-			String SQL_QUERY = "update workout set userid = ?, workouttypeid = ?, numberofworkouts = ?, date = ? where id = ?";
-			PreparedStatement pst = conn.prepareStatement(SQL_QUERY);
 			pst.setInt(1, workout.getUserId());
 			pst.setInt(2, workout.getType().getId());
 			pst.setInt(3, workout.getNumberOfWorkouts());

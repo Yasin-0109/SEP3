@@ -7,17 +7,22 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 public class Console implements Runnable {
 
 	JTextArea displayPane; // Pane where all text will be written to
+	PipedOutputStream stream; // Piped stream
 	BufferedReader reader; // Buffered reader for reading output
 	
 	private Console(JTextArea displayPane, PipedOutputStream stream) {
 		this.displayPane = displayPane; // Assign display pane
+		this.stream = stream;
 		
+		createReader();
+	}
+	
+	private void createReader() {
 		try {
 			PipedInputStream iS = new PipedInputStream(stream); // For reading content as a stream of bytes
 			reader = new BufferedReader(new InputStreamReader(iS)); // So we can read them on buffer
@@ -34,7 +39,9 @@ public class Console implements Runnable {
 				displayPane.setCaretPosition(displayPane.getDocument().getLength()); // We have to set the caret position to the end
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error redirecting output: " + e.getMessage()); // Show a message when we can't redirect output
+			displayPane.append("\nError redirecting output: " + e.getMessage() + "\n"); // Show a message when we can't redirect output
+			displayPane.setCaretPosition(displayPane.getDocument().getLength()); // We have to set the caret position to the end
+			createReader();
 		}
 	}
 	
