@@ -1,0 +1,18 @@
+﻿[06.16.58] [ERROR] ----------------------------------------
+[06.16.58] [ERROR] Unhandled UI Exception
+[06.16.58] [ERROR] wtf
+[06.16.58] [ERROR] Object reference not set to an instance of an object.
+[06.16.58] [ERROR] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Client.UserLoggedIn.button17_Click(Object sender, EventArgs e) in C:\Users\Madar\source\repos\wtf\wtf\UserLoggedIn.cs:line 267
+   at System.Windows.Forms.Control.OnClick(EventArgs e)
+   at System.Windows.Forms.Button.OnClick(EventArgs e)
+   at System.Windows.Forms.Button.OnMouseUp(MouseEventArgs mevent)
+   at System.Windows.Forms.Control.WmMouseUp(Message& m, MouseButtons button, Int32 clicks)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.ButtonBase.WndProc(Message& m)
+   at System.Windows.Forms.Button.WndProc(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+[06.16.58] [ERROR] Location: C:\Users\Madar\source\repos\wtf\wtf\UserLoggedIn.cs:267
+[06.16.58] [ERROR] ----------------------------------------

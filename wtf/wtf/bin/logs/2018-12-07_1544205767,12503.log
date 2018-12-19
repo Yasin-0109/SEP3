@@ -1,0 +1,14 @@
+﻿[19.02.30] [ERROR] ----------------------------------------
+[19.02.30] [ERROR] Unhandled Thread Exception
+[19.02.30] [ERROR] System.IO.FileNotFoundException: Could not load file or assembly 'RestSharp, Version=106.5.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75' or one of its dependencies. The system cannot find the file specified.
+File name: 'RestSharp, Version=106.5.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75'
+   at wtf.API.ApiClient..ctor()
+   at Client.Program.Main()
+
+WRN: Assembly binding logging is turned OFF.
+To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
+Note: There is some performance penalty associated with assembly bind failure logging.
+To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
+
+[19.02.30] [ERROR] System.UnhandledExceptionEventArgs
+[19.02.30] [ERROR] ----------------------------------------

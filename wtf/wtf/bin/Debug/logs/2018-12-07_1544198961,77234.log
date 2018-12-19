@@ -1,0 +1,16 @@
+﻿[17.08.47] [ERROR] ----------------------------------------
+[17.08.47] [ERROR] Unhandled UI Exception
+[17.08.47] [ERROR] wtf
+[17.08.47] [ERROR] Object reference not set to an instance of an object.
+[17.08.47] [ERROR] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Client.UserLoggedIn.dataGridView2_CellClick(Object sender, DataGridViewCellEventArgs e) in C:\Users\Madar\source\repos\wtf\wtf\UserLoggedIn.cs:line 404
+   at System.Windows.Forms.DataGridView.OnCellClick(DataGridViewCellEventArgs e)
+   at System.Windows.Forms.DataGridView.OnMouseClick(MouseEventArgs e)
+   at System.Windows.Forms.Control.WmMouseUp(Message& m, MouseButtons button, Int32 clicks)
+   at System.Windows.Forms.Control.WndProc(Message& m)
+   at System.Windows.Forms.DataGridView.WndProc(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+[17.08.47] [ERROR] Location: C:\Users\Madar\source\repos\wtf\wtf\UserLoggedIn.cs:404
+[17.08.47] [ERROR] ----------------------------------------

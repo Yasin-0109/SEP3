@@ -1,0 +1,13 @@
+C:\Users\Madar\source\repos\wtf\wtf\bin\Debug\wtf.exe.config
+C:\Users\Madar\source\repos\wtf\wtf\bin\Debug\wtf.exe
+C:\Users\Madar\source\repos\wtf\wtf\bin\Debug\wtf.pdb
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.csprojAssemblyReference.cache
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.Form1.resources
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.Properties.Resources.resources
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.csproj.GenerateResource.cache
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.csproj.CoreCompileInputs.cache
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.exe
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.pdb
+C:\Users\Madar\source\repos\wtf\wtf\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Madar\source\repos\wtf\wtf\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Madar\source\repos\wtf\wtf\obj\Debug\wtf.csproj.CopyComplete
