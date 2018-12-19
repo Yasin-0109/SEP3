@@ -7,7 +7,7 @@ create domain role as varchar(20);
 /* domains for user table */
 create domain firstname as varchar(30);
 create domain lastname as varchar(30);
-create domain dateofbirth as date;
+create domain dateofbirth as timestamp;
 create domain email as varchar(50);
 create domain password as varchar(30);
 create domain phonenumber as integer;
@@ -15,8 +15,8 @@ create domain phonenumber as integer;
 /* domains for activity */
 
 create domain name as varchar(30);
-create domain startTime time;
-create domain endTime time;
+create domain startTime timestamp;
+create domain endTime timestamp;
 
 
 /* domains for Subcriptiontype table */
@@ -24,8 +24,8 @@ create domain type as varchar(30);
 create domain price as integer;
 
 /* domains for Subscription table */
-create domain validfrom as date;
-create domain validto as date;
+create domain validfrom as timestamp;
+create domain validto as timestamp;
 
 /* domains for workout */
 create domain numberofworkouts as int;
@@ -261,6 +261,48 @@ select u.firstname, w.numberofworkouts, wt.type from users u
 join workout w on u.id = w.userid
 join workouttype wt on w.workouttypeid = wt.id
 where u.id = 1003;
+
+set search_path ='freshfitness';
+
+alter table workout
+add Date timestamp;
+
+select * from workout;
+
+
+select * from workout;
+
+alter table activity
+drop date;
+
+alter table activity
+drop starttime;
+
+alter table activity
+drop endtime;
+
+alter table activity
+add starttime timestamp;
+
+alter table activity 
+add endtime timestamp;
+
+
+select * from activity;
+
+select * from workout;
+
+update activity set starttime='2018-01-19 03:14:07', endtime='2018-01-19 05:14:07' where true;
+update workout set date='2018-01-19 03:14:07' where true;
+
+insert into workout(userid, workouttypeid, numberofworkouts, date) values (1002,1,20,'2018-01-19 05:14:07')
+
+SELECT MAX(id) FROM workout;   
+SELECT nextval(id_sequence);
+
+SELECT setval(pg_get_serial_sequence('workout', 'id'), max(id)) FROM workout;
+
+select * from users;
 
 
 
